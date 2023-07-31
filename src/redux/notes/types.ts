@@ -8,6 +8,6 @@ export interface Note {
     archived: boolean;
 }
 
-export interface INotesState {
+export interface NotesState {
     notesList: Note[];
 }

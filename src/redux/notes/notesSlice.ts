@@ -1,8 +1,14 @@
-import { createSlice, PayloadAction, nanoid } from "@reduxjs/toolkit";
+import {
+    createSlice,
+    PayloadAction,
+    nanoid,
+    createSelector,
+} from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { Note, NotesState } from "./types";
+import { parseDates } from "../../utils/parseDates";
 
-export const initialState: NotesState = {
+const initialState: NotesState = {
     notesList: [
         {
             id: "0",
@@ -71,7 +77,7 @@ export const initialState: NotesState = {
     ],
 };
 
-export const notesSlice = createSlice({
+const notesSlice = createSlice({
     name: "notes",
     initialState: initialState,
     reducers: {
@@ -88,16 +94,53 @@ export const notesSlice = createSlice({
                         id: nanoid(),
                         created: new Date().toISOString(),
                         archived: false,
-                        dates: "",
+                        dates: parseDates(content),
                     },
                 };
             },
         },
-        noteEdited(state: NotesState, action: PayloadAction<Note>) {
-            const noteIndex = state.notesList.findIndex(
-                (note: Note) => note.id === action.payload.id
-            );
-            state.notesList[noteIndex] = action.payload;
+        noteEdited: {
+            reducer(
+                state: NotesState,
+                action: PayloadAction<{
+                    id: string;
+                    data: {
+                        name: string;
+                        category: string;
+                        content: string;
+                        dates: string;
+                    };
+                }>
+            ) {
+                const noteIndex: number = state.notesList.findIndex(
+                    (note: Note) => note.id === action.payload.id
+                );
+
+                if (noteIndex !== -1) {
+                    state.notesList[noteIndex] = {
+                        ...state.notesList[noteIndex],
+                        ...action.payload.data,
+                    };
+                }
+            },
+            prepare(
+                id: string,
+                name: string,
+                category: string,
+                content: string
+            ) {
+                return {
+                    payload: {
+                        id,
+                        data: {
+                            name,
+                            category,
+                            content,
+                            dates: parseDates(content),
+                        },
+                    },
+                };
+            },
         },
         noteRemoved(state: NotesState, action: PayloadAction<string>) {
             state.notesList = state.notesList.filter(
@@ -105,19 +148,19 @@ export const notesSlice = createSlice({
             );
         },
         noteArchived(state: NotesState, action: PayloadAction<string>) {
-            const matchingNote: Note | undefined = state.notesList.find(
+            const noteIndex: number = state.notesList.findIndex(
                 (note: Note) => note.id === action.payload
             );
-            if (matchingNote) {
-                matchingNote.archived === true;
+            if (noteIndex !== -1) {
+                state.notesList[noteIndex].archived = true;
             }
         },
         noteUnarchived(state: NotesState, action: PayloadAction<string>) {
-            const matchingNote: Note | undefined = state.notesList.find(
+            const noteIndex: number = state.notesList.findIndex(
                 (note: Note) => note.id === action.payload
             );
-            if (matchingNote) {
-                matchingNote.archived === false;
+            if (noteIndex !== -1) {
+                state.notesList[noteIndex].archived = false;
             }
         },
     },
@@ -131,11 +174,52 @@ export const {
     noteUnarchived,
 } = notesSlice.actions;
 
-export const selectAllNotes = (state: RootState): Note[] =>
-    state.notes.notesList;
-export const selectArchivedNotes = (state: RootState): Note[] =>
-    state.notes.notesList.filter((note: Note) => note.archived);
-export const selectActiveNotes = (state: RootState): Note[] =>
-    state.notes.notesList.filter((note: Note) => !note.archived);
+const selectNotes = (state: RootState) => state.notes.notesList;
+
+const selectCategories = createSelector([selectNotes], (notes) => {
+    const uniqueCategories = new Set<string>();
+    notes.map((note) => uniqueCategories.add(note.category));
+    return uniqueCategories;
+});
+
+const selectActiveNotes = createSelector([selectNotes], (notes) =>
+    notes.filter((note) => !note.archived)
+);
+
+const selectArchivedNotes = createSelector([selectNotes], (notes) =>
+    notes.filter((note) => note.archived)
+);
+
+const selectNotesStats = createSelector(
+    [(state) => state.notes.notesList],
+    (notes) => {
+        const result: {
+            [category: string]: Record<string, number>;
+        } = {};
+
+        for (const note of notes) {
+            const category = note.category;
+            const status = note.archived ? "archived" : "active";
+            if (!result[category]) {
+                result[category] = {};
+            }
+            if (!result[category][status]) {
+                result[category][status] = 0;
+            }
+            result[category][status]++;
+        }
+
+        return result;
+    }
+);
+
+export {
+    notesSlice,
+    selectNotes,
+    selectActiveNotes,
+    selectArchivedNotes,
+    selectNotesStats,
+    selectCategories,
+};
 
 export default notesSlice.reducer;

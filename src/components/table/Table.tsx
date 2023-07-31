@@ -1,23 +1,27 @@
-import Row from "./TableRow";
-import { ITableProps } from "./types";
+import TableHeader from "./header/TableHeader";
+import TableBody from "./body/TableBody";
+import { ITableProps, ITableDataItem } from "./types";
 
-function Table<T>(props: ITableProps<T>) {
-    const { rows, columns, caption } = props;
+import styles from "./Table.module.css";
+
+function Table<T extends ITableDataItem, K extends keyof T, E>(
+    props: ITableProps<T, K, E>
+) {
+    const { caption, rows, columns, actions, exampleRow, hideHeader } = props;
+    const showCaption = caption && (rows.length > 0 || exampleRow);
+    const showHeader = !hideHeader && (rows.length > 0 || exampleRow);
+
     return (
-        <table>
-            {caption && <caption>{caption}</caption>}
-            <thead>
-                <tr>
-                    {columns.map((column) => (
-                        <th key={column.key as string}>{column.title}</th>
-                    ))}
-                </tr>
-            </thead>
-            <tbody>
-                {rows.map((row, index) => (
-                    <Row key={index} columns={columns} data={row} />
-                ))}
-            </tbody>
+        <table className={styles.table}>
+            {showCaption && <caption>{caption}</caption>}
+            {showHeader && <TableHeader columns={columns} actions={actions} />}
+
+            <TableBody
+                rows={rows}
+                columns={columns}
+                actions={actions}
+                exampleRow={exampleRow}
+            />
         </table>
     );
 }
