@@ -12,24 +12,20 @@ const CategoryChoice = ({
     onChange,
 }: CategoryInputProps) => {
     return (
-        <fieldset className="row mb-2">
-            <legend className="col-form-label col-sm-3 pt-0">Category</legend>
-            <div className="col-sm-9">
+        <fieldset>
+            <legend>Category</legend>
+            <div>
                 {categories.map((category) => (
-                    <div className="form-check" key={category}>
+                    <div key={category}>
                         <input
                             type="radio"
+                            id={`categ  ory-${category}`}
                             name="category"
-                            className="form-check-input"
-                            id={`category-${category}`}
                             value={category}
-                            checked={value === category}
                             onChange={onChange}
+                            checked={value === category}
                         ></input>
-                        <label
-                            className="form-check-label"
-                            htmlFor={`category-${category}`}
-                        >
+                        <label htmlFor={`category-${category}`}>
                             {category}
                         </label>
                     </div>

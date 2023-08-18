@@ -1,94 +1,38 @@
+import { useState } from "react";
 import {
     BsFillPencilFill,
     BsFillTrashFill,
     BsFillFileEarmarkZipFill,
+    BsPlusLg,
 } from "react-icons/bs";
-import { useAppSelector, useAppDispatch } from "../../redux/hooks";
-import {
-    selectActiveNotes,
-    noteRemoved,
-    noteArchived,
-} from "../../redux/notes/notesSlice";
+import Button from "../../components/button/Button";
 import Table from "../../components/table";
-import {
-    NotesTableColumn,
-    ActiveNotesTableAction,
-    Note,
-    ActiveNoteActionName,
-} from "../types";
-import { getFormattedDate } from "../../utils/getFormattedDate";
+import NoteFormModal from "../form-modal/NoteFormModal";
+import { useTableActions } from "../../hooks/useTableActions";
+import { useAppSelector } from "../../redux/hooks";
+import { selectActiveNotes } from "../../redux/notes/notesSlice";
+import { ActiveNotesTableAction, ActiveNoteActionName } from "../types";
+import { dataShape } from "./dataShape";
+import { exampleRowData } from "./exampleRowData";
+import { Note } from "../types";
 
-export const colNames: NotesTableColumn[] = [
-    {
-        key: "name",
-        header: "Name",
-    },
-    {
-        key: "created",
-        header: "Created",
-        format: (value: string) =>
-            getFormattedDate(value, {
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-            }),
-    },
-    { key: "category", header: "Category", align: "center" },
-    { key: "content", header: "Content" },
-    {
-        key: "dates",
-        header: "Dates",
-        format: (value: string) => {
-            const valuesList = value.split(", ");
-            let result = "";
-            for (value of valuesList) {
-                try {
-                    const formattedDate = getFormattedDate(value, {
-                        month: "numeric",
-                        day: "numeric",
-                        year: "numeric",
-                    });
-                    result = result.concat(formattedDate, " ");
-                } catch (e) {
-                    result = result.concat(value, " ");
-                }
-            }
-            return result;
-        },
-    },
-];
-
-const exampleRow: Note = {
-    id: "exampleId",
-    name: "Example name",
-    created: new Date().toISOString(),
-    category: "Task",
-    content: "Description",
-    dates: "",
-    archived: false,
-};
-
-type ActiveNotesTableProps = {
-    onSelectNote: (note: Note) => void;
-};
-
-const ActiveNotesTable = ({ onSelectNote }: ActiveNotesTableProps) => {
-    const dispatch = useAppDispatch();
+const ActiveNotesTable = () => {
     const activeNotesList = useAppSelector(selectActiveNotes);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedNote, setSelectedNote] = useState<Note | undefined>();
 
-    const onEditClick = (noteId: string) => {
-        const clickedItem = activeNotesList.find((note) => note.id === noteId);
-        if (clickedItem) {
-            onSelectNote(clickedItem);
+    const { onArchive, onRemove } = useTableActions();
+
+    const openEditForm = (noteId: string) => {
+        const noteData = activeNotesList.find((note) => note.id === noteId);
+        if (noteData) {
+            setSelectedNote(noteData);
+            setIsModalOpen(true);
         }
     };
 
-    const onRemoveClick = (noteId: string) => {
-        dispatch(noteRemoved(noteId));
-    };
-
-    const onArchiveClick = (noteId: string) => {
-        dispatch(noteArchived(noteId));
+    const clearSelectedNote = () => {
+        setSelectedNote(undefined);
     };
 
     const actions: ActiveNotesTableAction[] = [
@@ -96,30 +40,47 @@ const ActiveNotesTable = ({ onSelectNote }: ActiveNotesTableProps) => {
             key: ActiveNoteActionName.Edit,
             header: <BsFillPencilFill />,
             align: "center",
-            cb: onEditClick,
+            cb: openEditForm,
         },
         {
             key: ActiveNoteActionName.Archive,
             header: <BsFillFileEarmarkZipFill />,
             align: "center",
-            cb: onArchiveClick,
+            cb: onArchive,
         },
         {
             key: ActiveNoteActionName.Remove,
             header: <BsFillTrashFill />,
             align: "center",
-            cb: onRemoveClick,
+            cb: onRemove,
         },
     ];
 
     return (
-        <Table
-            caption="Active Notes"
-            columns={colNames}
-            rows={activeNotesList}
-            exampleRow={exampleRow}
-            actions={actions}
-        />
+        <>
+            <Table
+                columns={dataShape}
+                rows={activeNotesList}
+                exampleRow={exampleRowData}
+                actions={actions}
+            />
+            <div className="mt-2 ml-auto">
+                <Button
+                    onClick={() => setIsModalOpen(true)}
+                    shape="square"
+                    size="md"
+                >
+                    <BsPlusLg />
+                </Button>
+            </div>
+            {isModalOpen && (
+                <NoteFormModal
+                    selectedNote={selectedNote}
+                    clearSelectedNote={clearSelectedNote}
+                    setIsModalOpen={setIsModalOpen}
+                />
+            )}
+        </>
     );
 };
 

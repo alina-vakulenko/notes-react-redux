@@ -1,10 +1,9 @@
 import SummaryNotesTable from "./pages/notes-summary/SummaryNotesTable";
 import Notes from "./pages/notes-container/Notes";
-import "./App.css";
 
 function App() {
     return (
-        <div className="app">
+        <div className="p-12 flex flex-col items-center min-h-screen text-clamp">
             <Notes />
             <SummaryNotesTable />
         </div>

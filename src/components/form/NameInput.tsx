@@ -7,13 +7,11 @@ type NameInputProps = {
 
 const NameInput = ({ value, onChange }: NameInputProps) => {
     return (
-        <div className="mb-2">
-            <label htmlFor="name" className="form-label">
-                Name
-            </label>
+        <div>
+            <label htmlFor="name">Name</label>
             <input
-                className="form-control"
                 type="text"
+                id="name"
                 name="name"
                 value={value}
                 onChange={onChange}

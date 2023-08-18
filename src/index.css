@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    [type="text"],
+    textarea {
+        @apply w-full border-gray-300 rounded-lg shadow-sm focus:border-slate-500 focus:ring-slate-500;
+    }
+
+    [type="checkbox"],
+    [type="radio"] {
+        @apply rounded border-gray-300 text-slate-700 focus:ring-slate-500;
+    }
+
+    [type="radio"] {
+        @apply rounded-full mr-2;
+    }
+}

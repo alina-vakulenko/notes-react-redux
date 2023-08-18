@@ -1,27 +1,16 @@
 import { BsFillTrashFill, BsFillFileEarmarkArrowUpFill } from "react-icons/bs";
-import { useAppSelector, useAppDispatch } from "../../redux/hooks";
-import {
-    selectArchivedNotes,
-    noteUnarchived,
-    noteRemoved,
-} from "../../redux/notes/notesSlice";
 import Table from "../../components/table";
-import { ArchivedNotesTableAction, ArchivedNoteActionName } from "../types";
-import { colNames } from "../notes-active/ActiveNotesTable";
+import { useTableActions } from "../../hooks/useTableActions";
+import { useAppSelector } from "../../redux/hooks";
+import { selectArchivedNotes } from "../../redux/notes/notesSlice";
+import { dataShape } from "../notes-active/dataShape";
+import { ArchivedNoteActionName, ArchivedNotesTableAction } from "../types";
 
 const ArchivedNotesTable = () => {
-    const dispatch = useAppDispatch();
     const archivedNotesList = useAppSelector(selectArchivedNotes);
+    const { onUnarchive, onRemove } = useTableActions();
 
-    const onRemove = (noteId: string) => {
-        dispatch(noteRemoved(noteId));
-    };
-
-    const onUnarchive = (noteId: string) => {
-        dispatch(noteUnarchived(noteId));
-    };
-
-    const actions: ArchivedNotesTableAction[] = [
+    const archivedNotesActions: ArchivedNotesTableAction[] = [
         {
             key: ArchivedNoteActionName.Unarchive,
             header: <BsFillFileEarmarkArrowUpFill />,
@@ -39,9 +28,9 @@ const ArchivedNotesTable = () => {
     return (
         <Table
             caption="Archived Notes"
-            columns={colNames}
+            columns={dataShape}
             rows={archivedNotesList}
-            actions={actions}
+            actions={archivedNotesActions}
         />
     );
 };

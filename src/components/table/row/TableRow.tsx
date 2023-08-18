@@ -16,7 +16,7 @@ function TableRow<T extends ITableDataItem, K extends keyof T, E>({
     actions,
 }: ITableRowProps<T, K, E>) {
     return (
-        <tr>
+        <tr className="bg-gray-100 hover:bg-gray-50">
             {headers.map((header) => (
                 <TableCellWithValue
                     key={`${rowId}-${String(header.key)}`}

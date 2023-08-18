@@ -1,7 +1,5 @@
 import { ReactNode } from "react";
 
-import styles from "../Table.module.css";
-
 interface ITableCellWithActionProps {
     label: ReactNode;
     actionName: string;
@@ -12,16 +10,18 @@ interface ITableCellWithActionProps {
 
 function TableCellWithAction(props: ITableCellWithActionProps) {
     const { label, actionName, onClick, isExample, align } = props;
+    const cellAlign = `text-${align}`;
+    const cellClassName = `${cellAlign}`;
 
     return (
-        <td className={styles[`cell-align-${align}`]}>
+        <td className={cellClassName}>
             <button
                 onClick={onClick}
-                className={styles["btn-action"]}
+                className="rounded text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-gray-500 focus:ring-opacity-50"
                 title={actionName}
                 disabled={isExample}
             >
-                {label}
+                <span>{label}</span>
             </button>
         </td>
     );

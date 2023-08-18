@@ -13,14 +13,24 @@ function TableHeader<T extends ITableDataItem, K extends keyof T, E>({
         <thead>
             <tr>
                 {columns.map((column) => (
-                    <th key={`${column.key as string}-header`} scope="col">
+                    <th
+                        key={`${column.key as string}-header`}
+                        scope="col"
+                        className="p-2 text-center text-white bg-slate-700"
+                    >
                         {column.header}
                     </th>
                 ))}
                 {actions &&
                     actions.map((action) => (
-                        <th key={`${action.key as string}-header`} scope="col">
-                            {action.header}
+                        <th
+                            key={`${action.key as string}-header`}
+                            scope="col"
+                            className="p-2 text-white bg-slate-700"
+                        >
+                            <span className="flex justify-center">
+                                {action.header}
+                            </span>
                         </th>
                     ))}
             </tr>
