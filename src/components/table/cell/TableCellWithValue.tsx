@@ -1,7 +1,5 @@
 import { ITableDataItem } from "../types";
 
-import styles from "../Table.module.css";
-
 interface ITableCellWithValueProps<
     T extends ITableDataItem,
     K extends keyof T
@@ -27,13 +25,13 @@ function TableCellWithValue<T extends ITableDataItem, K extends keyof T>({
             console.log(e, `${value} can't be formatted`);
         }
     }
+    const cellAlign = `text-${align}`;
+    const cellClassName = `p-2 first-of-type:font-semibold overflow-hidden text-ellipsis ${cellAlign} ${
+        isExample ? "italic text-gray-500" : ""
+    }`;
 
     return (
-        <td
-            className={`${
-                styles[isExample ? "table-cell-example" : "table-cell"]
-            } ${styles[`cell-align-${align}`]}`}
-        >
+        <td className={cellClassName}>
             {formattedValue ? formattedValue : value}
         </td>
     );

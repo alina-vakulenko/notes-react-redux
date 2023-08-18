@@ -7,11 +7,11 @@ type ContentInputProps = {
 
 const ContentBlock = ({ value, onChange }: ContentInputProps) => {
     return (
-        <div className="mb-2">
+        <div>
             <label htmlFor="content">Content</label>
             <textarea
+                id="content"
                 name="content"
-                className="form-control"
                 value={value}
                 onChange={onChange}
             ></textarea>

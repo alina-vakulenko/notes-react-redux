@@ -8,18 +8,15 @@ type SwitcherProps = {
 
 const Switcher = ({ checked, label, onChange }: SwitcherProps) => {
     return (
-        <div className="form-check form-switch ms-auto mt-2">
+        <div className="flex items-center gap-2">
             <input
-                className="form-check-input"
                 type="checkbox"
-                role="switch"
                 id="switch-archive-show"
+                name="switch-archive-show"
                 checked={checked}
                 onChange={onChange}
             />
-            <label className="form-check-label" htmlFor="switch-archive-show">
-                {label}
-            </label>
+            <label htmlFor="switch-archive-show">{label}</label>
         </div>
     );
 };

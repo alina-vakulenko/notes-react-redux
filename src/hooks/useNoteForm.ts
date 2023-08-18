@@ -1,20 +1,25 @@
 import { useState, ChangeEvent } from "react";
-import { Note } from "../pages/types";
 
-export const useNoteForm = (dataToEdit: Note | null) => {
-    const emptyState = {
-        name: "",
-        category: "Task",
-        content: "",
-    };
-    const [formData, setFormData] = useState(dataToEdit || emptyState);
+const defaultNoteData = {
+    name: "",
+    category: "Task",
+    content: "",
+};
+
+export const useNoteForm = (currentNote = defaultNoteData) => {
+    const [formData, setFormData] = useState(currentNote);
     const [errors, setErrors] = useState<string[]>([]);
 
     const validateFormData = () => {
-        if (formData.name && formData.category) {
+        if (formData.name && formData.category && formData.content) {
             setErrors([]);
-            return true;
+            return {
+                name: formData.name,
+                category: formData.category,
+                content: formData.content,
+            };
         }
+
         const errors = [];
         if (!formData.name) {
             errors.push("Name should not be empty");
@@ -22,25 +27,28 @@ export const useNoteForm = (dataToEdit: Note | null) => {
         if (!formData.category) {
             errors.push("Category missed");
         }
+        if (!formData.content) {
+            errors.push("Content should not be empty");
+        }
         setErrors(errors);
         return false;
     };
 
-    const onChange = (
+    const handleChange = (
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const resetNoteForm = () => {
-        setFormData(emptyState);
+        setFormData(defaultNoteData);
     };
 
     return {
-        formData,
-        resetNoteForm,
         errors,
+        formData,
         validateFormData,
-        onChange,
+        handleChange,
+        resetNoteForm,
     };
 };

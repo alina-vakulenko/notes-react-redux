@@ -1,108 +1,95 @@
-import { MouseEvent, useRef, useEffect } from "react";
-import { useAppDispatch } from "../../redux/hooks";
-import { noteAdded, noteEdited } from "../../redux/notes/notesSlice";
+import { MouseEvent } from "react";
+import { BsX } from "react-icons/bs";
 import { useNoteForm } from "../../hooks/useNoteForm";
-import { CategoryType, Note } from "../types";
+import { useDialog } from "../../hooks/useDialog";
+import { CategoryType } from "../types";
 import NameInput from "../../components/form/NameInput";
 import CategoryInput from "../../components/form/CategoryInput";
 import ContentInput from "../../components/form/ContentInput";
 import ErrorBlock from "../../components/form/ErrorBlock";
-import styles from "./NoteFormModal.module.css";
+import Button from "../../components/button/Button";
+import { useTableActions } from "../../hooks/useTableActions";
+import { Note } from "../types";
 
-interface NoteFormProps {
-    editMode: boolean;
-    dataToEdit: Note | null;
-    clearDataToEdit: () => void;
-    setShow: React.Dispatch<React.SetStateAction<boolean>>;
-}
+type NoteFormModalProps = {
+    selectedNote?: Note;
+    clearSelectedNote: () => void;
+    setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
 const NoteFormModal = ({
-    setShow,
-    dataToEdit,
-    editMode,
-    clearDataToEdit,
-}: NoteFormProps) => {
-    const dispatch = useAppDispatch();
-    const modalRef = useRef<HTMLDialogElement>(null);
+    selectedNote,
+    clearSelectedNote,
+    setIsModalOpen,
+}: NoteFormModalProps) => {
+    const { dialogRef, closeDialog, isClickedOutside } = useDialog();
+    const { formData, errors, validateFormData, handleChange, resetNoteForm } =
+        useNoteForm(selectedNote);
+    const { onAdd, onEdit } = useTableActions();
 
-    const { formData, resetNoteForm, errors, validateFormData, onChange } =
-        useNoteForm(dataToEdit);
-
-    useEffect(() => {
-        if (modalRef.current) {
-            modalRef.current?.showModal();
-            document.body.classList.add("modal-open");
+    const onClose = () => {
+        if (selectedNote) {
+            clearSelectedNote();
         }
-    }, []);
-
-    const handleCloseModal = () => {
-        modalRef.current?.close();
-        setShow(false);
-        resetNoteForm();
-        clearDataToEdit();
-        document.body.classList.remove("modal-open");
-    };
-
-    const onClickOutside = (e: MouseEvent) => {
-        const dialogDimensions = modalRef.current?.getBoundingClientRect();
-        const isClickOutside =
-            dialogDimensions &&
-            (e.clientX < dialogDimensions.left ||
-                e.clientX > dialogDimensions.right ||
-                e.clientY < dialogDimensions.top ||
-                e.clientY > dialogDimensions.bottom);
-
-        if (isClickOutside && modalRef.current) {
-            handleCloseModal();
-        }
+        closeDialog();
+        setIsModalOpen(false);
     };
 
     const onSubmit = (e: MouseEvent) => {
         e.preventDefault();
-        if (!validateFormData()) return;
 
-        const { name, category, content } = formData;
+        const validatedFormData = validateFormData();
+        if (!validatedFormData) return;
 
-        if (editMode && dataToEdit) {
-            dispatch(noteEdited(dataToEdit.id, name, category, content));
-            handleCloseModal();
+        if (selectedNote) {
+            onEdit(selectedNote.id, validatedFormData);
         } else {
-            dispatch(noteAdded(name, category, content));
-            handleCloseModal();
+            onAdd(validatedFormData);
+        }
+        resetNoteForm();
+        onClose();
+    };
+
+    const onClickOutside = (e: MouseEvent) => {
+        if (isClickedOutside(e)) {
+            onClose();
         }
     };
 
     return (
         <dialog
-            ref={modalRef}
-            onClose={handleCloseModal}
-            onCancel={handleCloseModal}
+            ref={dialogRef}
+            onClose={onClose}
+            onCancel={onClose}
             onClick={onClickOutside}
+            className="relative w-[450px] min-h-[350px] border-2 border-slate-700 rounded-lg p-6 backdrop:backdrop-blur-sm backdrop:bg-black-50"
         >
-            <button
-                className={styles["btn-close-modal"]}
-                aria-label="Close modal"
-                onClick={handleCloseModal}
-            >
-                &times;
-            </button>
-            <form>
-                <NameInput value={formData.name} onChange={onChange} />
+            <div className="absolute top-2 right-2">
+                <Button
+                    onClick={onClose}
+                    shape="circle"
+                    size="sm"
+                    aria-label="Close modal"
+                >
+                    <BsX />
+                </Button>
+            </div>
+            <form className="flex flex-col gap-3">
+                <NameInput value={formData.name} onChange={handleChange} />
                 <CategoryInput
                     categories={Object.values(CategoryType)}
                     value={formData.category}
-                    onChange={onChange}
+                    onChange={handleChange}
                 />
-                <ContentInput value={formData.content} onChange={onChange} />
-                <ErrorBlock errors={errors} />
-                <button
-                    type="submit"
-                    onClick={onSubmit}
-                    className="btn btn-dark d-block mx-auto mt-4"
-                >
-                    Save
-                </button>
+                <ContentInput
+                    value={formData.content}
+                    onChange={handleChange}
+                />
+                {errors.length > 0 && <ErrorBlock errors={errors} />}
             </form>
+            <Button onClick={onSubmit} size="lg">
+                Save
+            </Button>
         </dialog>
     );
 };
