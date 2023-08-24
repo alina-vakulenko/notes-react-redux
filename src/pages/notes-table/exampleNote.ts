@@ -1,6 +1,6 @@
-import { Note } from "../types";
+import type { Note } from "../types";
 
-export const exampleRowData: Note = {
+export const exampleNote: Note = {
     id: "exampleId",
     name: "Example name",
     created: new Date().toISOString(),

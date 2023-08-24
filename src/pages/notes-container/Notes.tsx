@@ -1,22 +1,32 @@
-import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import Switcher from "../../components/switcher/Switcher";
-import ActiveNotesTable from "../notes-active/ActiveNotesTable";
-import ArchivedNotesTable from "../notes-archived/ArchivedNotesTable";
+import NotesTable from "../notes-table/NotesTable";
+import DemoPage from "../payments/Payments";
 
 const Notes = () => {
-    const [hideArchived, setHideArchived] = useState(true);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const showArchived = searchParams.get("withArchived") === "y";
+
+    const toggleShowArchivedNotes = () => {
+        if (showArchived) {
+            searchParams.delete("withArchived");
+            setSearchParams(searchParams);
+        } else {
+            setSearchParams({ ...searchParams, withArchived: "y" });
+        }
+    };
 
     return (
         <>
             <div className="mr-auto mb-2">
                 <Switcher
-                    label="Hide archived notes"
-                    checked={hideArchived}
-                    onChange={() => setHideArchived((prev) => !prev)}
+                    label="Show archived notes"
+                    checked={showArchived}
+                    onChange={toggleShowArchivedNotes}
                 />
             </div>
-            <ActiveNotesTable />
-            {!hideArchived && <ArchivedNotesTable />}
+            <NotesTable />
+            <DemoPage />
         </>
     );
 };

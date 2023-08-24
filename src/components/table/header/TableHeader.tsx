@@ -1,39 +1,38 @@
-import { ITableColumn, ITableAction, ITableDataItem } from "../types";
+import { HeaderGroup, flexRender } from "@tanstack/react-table";
+import { BsFillInfoCircleFill } from "react-icons/bs";
+import Tooltip from "../../tooltip/Tooltip";
+import type { ITableDataItem } from "../types";
 
-interface ITableHeaderProps<T extends ITableDataItem, K extends keyof T, E> {
-    columns: ITableColumn<T, K>[];
-    actions?: ITableAction<E>[];
-}
-
-function TableHeader<T extends ITableDataItem, K extends keyof T, E>({
-    columns,
-    actions,
-}: ITableHeaderProps<T, K, E>) {
+function TableHeader<T extends ITableDataItem>({
+    headerGroups,
+}: {
+    headerGroups: HeaderGroup<T>[];
+}) {
     return (
         <thead>
-            <tr>
-                {columns.map((column) => (
-                    <th
-                        key={`${column.key as string}-header`}
-                        scope="col"
-                        className="p-2 text-center text-white bg-slate-700"
-                    >
-                        {column.header}
-                    </th>
-                ))}
-                {actions &&
-                    actions.map((action) => (
+            {headerGroups.map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
                         <th
-                            key={`${action.key as string}-header`}
+                            key={header.id}
+                            className="p-2 text-center text-white bg-slate-700"
                             scope="col"
-                            className="p-2 text-white bg-slate-700"
                         >
-                            <span className="flex justify-center">
-                                {action.header}
-                            </span>
+                            {header.isPlaceholder
+                                ? null
+                                : flexRender(
+                                      header.column.columnDef.header,
+                                      header.getContext()
+                                  )}
+                            {/* {header.info && (
+                                <Tooltip message={header.info}>
+                                    <BsFillInfoCircleFill />
+                                </Tooltip>
+                            )} */}
                         </th>
                     ))}
-            </tr>
+                </tr>
+            ))}
         </thead>
     );
 }

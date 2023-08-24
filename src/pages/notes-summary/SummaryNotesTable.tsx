@@ -5,8 +5,8 @@ import {
     selectCategories,
 } from "../../redux/notes/notesSlice";
 import { useAppSelector } from "../../redux/hooks";
-import { colNames, statTableIds, NoteStats } from "./shape";
-import { CategoryType } from "../types";
+import { colDefinitions, statTableIds, NoteStats } from "./tableSchema";
+import { CategoryEnum } from "../types";
 
 const SummaryNotesTable = () => {
     const notesStats = useAppSelector((state) => selectNotesStats(state));
@@ -16,14 +16,14 @@ const SummaryNotesTable = () => {
 
     categories.forEach((category) =>
         rows.push({
-            id: statTableIds[category as CategoryType],
-            category: category as CategoryType,
+            id: statTableIds[category as CategoryEnum],
+            category: category as CategoryEnum,
             active: notesStats[category].active,
             archived: notesStats[category].archived,
         })
     );
 
-    return <Table caption="Summary" columns={colNames} rows={rows} />;
+    return <Table caption="Summary" columns={colDefinitions} rows={rows} />;
 };
 
 export default SummaryNotesTable;

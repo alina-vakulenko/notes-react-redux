@@ -1,28 +1,19 @@
-import { ReactNode } from "react";
+import type { IActionCellProps } from "../types";
 
-interface ITableCellWithActionProps {
-    label: ReactNode;
-    actionName: string;
-    onClick: () => void;
-    isExample: boolean;
-    align: "center" | "start" | "end";
-}
-
-function TableCellWithAction(props: ITableCellWithActionProps) {
-    const { label, actionName, onClick, isExample, align } = props;
+function TableCellWithAction({
+    onClick,
+    children,
+    align,
+    isExample,
+}: IActionCellProps) {
     const cellAlign = `text-${align}`;
-    const cellClassName = `${cellAlign}`;
+    const cellClassName = `p-2 first-of-type:font-semibold overflow-hidden text-ellipsis ${cellAlign} ${
+        isExample ? "italic text-gray-500" : ""
+    }`;
 
     return (
         <td className={cellClassName}>
-            <button
-                onClick={onClick}
-                className="rounded text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-gray-500 focus:ring-opacity-50"
-                title={actionName}
-                disabled={isExample}
-            >
-                <span>{label}</span>
-            </button>
+            <button onClick={onClick}>{children}</button>
         </td>
     );
 }

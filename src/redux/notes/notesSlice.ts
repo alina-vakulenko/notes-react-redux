@@ -79,32 +79,23 @@ const notesSlice = createSlice({
                 (note: Note) => note.id !== action.payload
             );
         },
-        noteArchived(state: NotesState, action: PayloadAction<string>) {
+        noteArchivedStatusToggled(
+            state: NotesState,
+            action: PayloadAction<string>
+        ) {
             const noteIndex: number = state.notesList.findIndex(
                 (note: Note) => note.id === action.payload
             );
             if (noteIndex !== -1) {
-                state.notesList[noteIndex].archived = true;
-            }
-        },
-        noteUnarchived(state: NotesState, action: PayloadAction<string>) {
-            const noteIndex: number = state.notesList.findIndex(
-                (note: Note) => note.id === action.payload
-            );
-            if (noteIndex !== -1) {
-                state.notesList[noteIndex].archived = false;
+                state.notesList[noteIndex].archived =
+                    !state.notesList[noteIndex].archived;
             }
         },
     },
 });
 
-export const {
-    noteAdded,
-    noteEdited,
-    noteRemoved,
-    noteArchived,
-    noteUnarchived,
-} = notesSlice.actions;
+export const { noteAdded, noteEdited, noteRemoved, noteArchivedStatusToggled } =
+    notesSlice.actions;
 
 const selectNotes = (state: RootState) => state.notes.notesList;
 

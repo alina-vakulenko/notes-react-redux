@@ -1,11 +1,11 @@
 import {
     noteAdded,
     noteEdited,
-    noteArchived,
-    noteUnarchived,
+    noteArchivedStatusToggled,
     noteRemoved,
 } from "../redux/notes/notesSlice";
 import { useAppDispatch } from "../redux/hooks";
+import type { Note } from "../redux/notes/types";
 
 export const useTableActions = () => {
     const dispatch = useAppDispatch();
@@ -19,29 +19,24 @@ export const useTableActions = () => {
     };
 
     const onEdit = (
-        noteId: string,
+        note: Note,
         data: { name: string; category: string; content: string }
     ) => {
-        dispatch(noteEdited(noteId, data.name, data.category, data.content));
+        dispatch(noteEdited(note.id, data.name, data.category, data.content));
     };
 
-    const onArchive = (noteId: string) => {
-        dispatch(noteArchived(noteId));
+    const onStatusChange = (note: Note) => {
+        dispatch(noteArchivedStatusToggled(note.id));
     };
 
-    const onUnarchive = (noteId: string) => {
-        dispatch(noteUnarchived(noteId));
-    };
-
-    const onRemove = (noteId: string) => {
-        dispatch(noteRemoved(noteId));
+    const onRemove = (note: Note) => {
+        dispatch(noteRemoved(note.id));
     };
 
     return {
         onAdd,
         onEdit,
-        onArchive,
-        onUnarchive,
+        onStatusChange,
         onRemove,
     };
 };

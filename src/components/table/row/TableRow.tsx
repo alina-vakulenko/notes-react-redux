@@ -1,44 +1,37 @@
-import TableCellWithValue from "../cell/TableCellWithValue";
-import TableCellWithAction from "../cell/TableCellWithAction";
-import { ITableColumn, ITableAction, ITableDataItem } from "../types";
+import TableCell from "../cell/TableCell";
+import type { ITableDataItem } from "../types";
+import type { Cell } from "@tanstack/react-table";
 
-interface ITableRowProps<T extends ITableDataItem, K extends keyof T, E> {
-    data: T;
-    headers: ITableColumn<T, K>[];
-    rowId: string;
-    actions?: ITableAction<E>[];
-}
-
-function TableRow<T extends ITableDataItem, K extends keyof T, E>({
-    headers,
-    data,
-    rowId,
-    actions,
-}: ITableRowProps<T, K, E>) {
+function TableRow<T extends ITableDataItem>({ cells }: { cells: Cell<T>[] }) {
     return (
         <tr className="bg-gray-100 hover:bg-gray-50">
-            {headers.map((header) => (
-                <TableCellWithValue
-                    key={`${rowId}-${String(header.key)}`}
-                    value={data[header.key]}
-                    isExample={rowId === "row-example"}
-                    align={header.align || "start"}
-                    format={header.format}
-                />
+            {cells.map((cell) => (
+                <TableCell key={cell.id} cell={cell} />
             ))}
-
-            {actions &&
-                actions.map((action) => (
-                    <TableCellWithAction
-                        key={`${rowId}-${String(action.key)}`}
-                        label={action.header}
-                        actionName={String(action.key)}
-                        onClick={() => action.cb(String(data.id))}
-                        isExample={rowId === "row-example"}
-                        align={action.align || "start"}
-                    />
-                ))}
         </tr>
+
+        // <tr className="bg-gray-100 hover:bg-gray-50">
+        //     {dataSchema.map((columnSchema) => (
+        //         <TableCell
+        //             key={`${data.id}-${String(columnSchema.key)}`}
+        //             type={columnSchema.type}
+        //             value={data[columnSchema.key]}
+        //             align={columnSchema.align || "start"}
+        //             transform={columnSchema.transform}
+        //             isExample={isExample}
+        //         />
+        //     ))}
+        //     {actions?.map((action) => (
+        //         <TableCellWithAction
+        //             key={`${data.id}-${String(action.key)}`}
+        //             onClick={() => action.onClick(data)}
+        //             align={action.align || "center"}
+        //             isExample={isExample}
+        //         >
+        //             {action.children}
+        //         </TableCellWithAction>
+        //     ))}
+        // </tr>
     );
 }
 
