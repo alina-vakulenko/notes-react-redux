@@ -9,7 +9,8 @@ const defaultNoteData = {
 export const useNoteForm = (currentNote = defaultNoteData) => {
     const [formData, setFormData] = useState(currentNote);
     const [errors, setErrors] = useState<string[]>([]);
-
+    console.log(currentNote);
+    console.log(formData);
     const validateFormData = () => {
         if (formData.name && formData.category && formData.content) {
             setErrors([]);

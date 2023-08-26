@@ -1,86 +1,74 @@
 import { useSearchParams } from "react-router-dom";
+import { useState } from "react";
 import {
-    // BsFillPencilFill,
-    // BsFillTrashFill,
-    // BsFillFileEarmarkZipFill,
-    // BsFillFileEarmarkArrowUpFill,
-    BsPlusLg,
-} from "react-icons/bs";
-import Button from "../../components/button/Button";
-import Table from "../../components/table";
-import NoteFormModal from "../form-modal/NoteFormModal";
+    ColumnFiltersState,
+    SortingState,
+    VisibilityState,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    getSortedRowModel,
+    useReactTable,
+    getFacetedRowModel,
+    getFacetedUniqueValues,
+} from "@tanstack/react-table";
 import {
     selectActiveNotes,
     selectArchivedNotes,
 } from "../../redux/notes/notesSlice";
 import { useAppSelector } from "../../redux/hooks";
-import type { Note } from "../../redux/notes/types";
-import { useTableActions } from "../../hooks/useTableActions";
-import { columns } from "./tableSchema";
+import NoteFormModal from "../form-modal/NoteFormModal";
+import { columns } from "./columns";
+import DataTable from "@/components/table/Table";
+import TablePagination from "@/components/table/TablePagination";
+import TableToolbar from "./TableToolbar";
 
 const NotesTable = () => {
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams] = useSearchParams();
     const activeNotesList = useAppSelector(selectActiveNotes);
     const archivedNotesList = useAppSelector(selectArchivedNotes);
 
-    const showModal = searchParams.get("withArchived") === "y";
+    const showArchived = searchParams.has("withArchived");
 
-    const notesList = showModal
+    const data = showArchived
         ? [...activeNotesList, ...archivedNotesList]
         : activeNotesList;
 
-    const { onStatusChange, onRemove } = useTableActions();
+    const [sorting, setSorting] = useState<SortingState>([]);
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+        {}
+    );
+    const [rowSelection, setRowSelection] = useState({});
 
-    const openEditForm = (note: Note) => {
-        setSearchParams({
-            ...searchParams,
-            note: note.id,
-        });
-    };
-
-    // const actions: IRowAction<Note>[] = [
-    //     {
-    //         key: ActionEnum.EDIT,
-    //         type: "action",
-    //         colName: "Edit",
-    //         info: "Edit note",
-    //         onClick: openEditForm,
-    //         children: <BsFillPencilFill />,
-    //     },
-    //     {
-    //         key: ActionEnum.REMOVE,
-    //         type: "action",
-    //         colName: "Remove",
-    //         info: "Remove note",
-    //         onClick: onRemove,
-    //         children: <BsFillTrashFill />,
-    //     },
-    //     {
-    //         key: ActionEnum.TOGGLE_STATUS,
-    //         type: "action",
-    //         colName: "Toggle",
-    //         info: "Toggle status",
-    //         onClick: onStatusChange,
-    //         children: <BsFillFileEarmarkZipFill />,
-    //     },
-    // ];
+    const table = useReactTable({
+        data,
+        columns,
+        onRowSelectionChange: setRowSelection,
+        onSortingChange: setSorting,
+        onColumnFiltersChange: setColumnFilters,
+        onColumnVisibilityChange: setColumnVisibility,
+        getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        getFacetedRowModel: getFacetedRowModel(),
+        getFacetedUniqueValues: getFacetedUniqueValues(),
+        state: {
+            sorting,
+            columnFilters,
+            columnVisibility,
+            rowSelection,
+        },
+    });
 
     return (
-        <>
-            <Table columns={columns} data={notesList} />
-            <div className="mt-2 ml-auto">
-                <Button
-                    onClick={() =>
-                        setSearchParams({ ...searchParams, createNote: "y" })
-                    }
-                    shape="square"
-                    size="md"
-                >
-                    <BsPlusLg />
-                </Button>
-            </div>
+        <div className="space-y-4">
+            <TableToolbar table={table} />
+            <DataTable table={table} />
+            <TablePagination table={table} />
             <NoteFormModal />
-        </>
+        </div>
     );
 };
 

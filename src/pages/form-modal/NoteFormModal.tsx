@@ -1,6 +1,6 @@
 import { useSearchParams } from "react-router-dom";
 import { MouseEvent } from "react";
-import { CategoryEnum } from "../types";
+import { CategoryEnum } from "../notes-table/data/categories";
 import Dialog from "../../components/dialog/Dialog";
 import NameInput from "../../components/form/NameInput";
 import CategoryInput from "../../components/form/CategoryInput";
@@ -14,10 +14,10 @@ import { selectActiveNotes } from "../../redux/notes/notesSlice";
 
 const NoteFormModal = () => {
     const [searchParams, setSearchParams] = useSearchParams();
-
-    const selectedNoteId = searchParams.get("note");
     const activeNotes = useAppSelector(selectActiveNotes);
     let selectedNote: Note | undefined;
+
+    const selectedNoteId = searchParams.get("note");
     if (selectedNoteId) {
         selectedNote = activeNotes.find((note) => note.id === selectedNoteId);
     }

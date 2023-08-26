@@ -1,7 +1,6 @@
 import { useSearchParams } from "react-router-dom";
 import Switcher from "../../components/switcher/Switcher";
 import NotesTable from "../notes-table/NotesTable";
-import DemoPage from "../payments/Payments";
 
 const Notes = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -26,7 +25,6 @@ const Notes = () => {
                 />
             </div>
             <NotesTable />
-            <DemoPage />
         </>
     );
 };

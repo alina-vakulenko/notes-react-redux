@@ -1,7 +1,9 @@
+import { useSearchParams } from "react-router-dom";
 import {
     noteAdded,
     noteEdited,
-    noteArchivedStatusToggled,
+    noteArchived,
+    noteUnarchived,
     noteRemoved,
 } from "../redux/notes/notesSlice";
 import { useAppDispatch } from "../redux/hooks";
@@ -9,6 +11,18 @@ import type { Note } from "../redux/notes/types";
 
 export const useTableActions = () => {
     const dispatch = useAppDispatch();
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const openEditForm = (noteId: string) => {
+        setSearchParams({
+            ...searchParams,
+            note: noteId,
+        });
+    };
+
+    const openCreateForm = () => {
+        setSearchParams({ ...searchParams, createNote: "y" });
+    };
 
     const onAdd = (data: {
         name: string;
@@ -25,18 +39,25 @@ export const useTableActions = () => {
         dispatch(noteEdited(note.id, data.name, data.category, data.content));
     };
 
-    const onStatusChange = (note: Note) => {
-        dispatch(noteArchivedStatusToggled(note.id));
+    const onArchived = (noteId: string) => {
+        dispatch(noteArchived(noteId));
     };
 
-    const onRemove = (note: Note) => {
-        dispatch(noteRemoved(note.id));
+    const onUnarchived = (noteId: string) => {
+        dispatch(noteUnarchived(noteId));
+    };
+
+    const onRemove = (noteId: string) => {
+        dispatch(noteRemoved(noteId));
     };
 
     return {
         onAdd,
         onEdit,
-        onStatusChange,
+        onArchived,
+        onUnarchived,
         onRemove,
+        openEditForm,
+        openCreateForm,
     };
 };
