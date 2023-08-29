@@ -9,6 +9,7 @@ import {
     TableHeaderCell,
     TableCell,
 } from "@/components/ui/table";
+import TableRecord from "./TableRecord";
 
 interface TableProps<TData> {
     table: ITable<TData>;
@@ -46,23 +47,24 @@ export default function DataTable<TData>({
             <TableBody>
                 {table.getRowModel().rows?.length ? (
                     table.getRowModel().rows.map((row) => (
-                        <TableRow
-                            key={row.id}
-                            data-state={row.getIsSelected() && "selected"}
-                            className="bg-gray-100 hover:bg-gray-50 border-b-transparent border-b-2"
-                        >
-                            {row.getVisibleCells().map((cell) => (
-                                <TableCell
-                                    key={cell.id}
-                                    className="p-2 first-of-type:font-semibold overflow-hidden text-ellipsis"
-                                >
-                                    {flexRender(
-                                        cell.column.columnDef.cell,
-                                        cell.getContext()
-                                    )}
-                                </TableCell>
-                            ))}
-                        </TableRow>
+                        // <TableRow
+                        //     key={row.id}
+                        //     data-state={row.getIsSelected() && "selected"}
+                        //     className="bg-slate-100 border-b-2 border-b-transparent"
+                        // >
+                        //     {row.getVisibleCells().map((cell) => (
+                        //         <TableCell
+                        //             key={cell.id}
+                        //             className="p-2 first-of-type:font-semibold overflow-hidden text-ellipsis"
+                        //         >
+                        //             {flexRender(
+                        //                 cell.column.columnDef.cell,
+                        //                 cell.getContext()
+                        //             )}
+                        //         </TableCell>
+                        //     ))}
+                        // </TableRow>
+                        <TableRecord key={row.id} row={row} />
                     ))
                 ) : (
                     <TableRow>

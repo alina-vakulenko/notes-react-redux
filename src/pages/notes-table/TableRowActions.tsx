@@ -1,15 +1,21 @@
-import { RxDotsHorizontal } from "react-icons/rx";
+import { Link, useLocation } from "react-router-dom";
 import { Row } from "@tanstack/react-table";
+import {
+    RxDotsHorizontal,
+    RxTrash,
+    RxPencil1,
+    RxPinBottom,
+    RxPinTop,
+} from "react-icons/rx";
+
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useTableActions } from "@/hooks/useTableActions";
+import { useNoteTableActions } from "@/hooks/useNoteTableActions";
 
 interface TableRowActionsProps<TData> {
     row: Row<TData>;
@@ -18,9 +24,9 @@ interface TableRowActionsProps<TData> {
 export default function TableRowActions<Note>({
     row,
 }: TableRowActionsProps<Note>) {
+    const location = useLocation();
     const note = row.original;
-    const { openEditForm, onRemove, onArchived } = useTableActions();
-
+    const { onRemove, onArchived, onUnarchived } = useNoteTableActions();
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -33,17 +39,35 @@ export default function TableRowActions<Note>({
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="bg-white w-[160px]">
-                <DropdownMenuItem onClick={() => openEditForm(note.id)}>
-                    Edit
+                <DropdownMenuItem className="flex justify-between items-center">
+                    <Link
+                        to={`/edit/${note.id}`}
+                        state={{ backgroundLocation: location }}
+                    >
+                        Edit
+                        <RxPencil1 />
+                    </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onArchived(note.id)}>
+                <DropdownMenuItem
+                    onClick={() => onArchived(note.id)}
+                    className="flex justify-between items-center"
+                >
                     Archive
+                    <RxPinBottom />
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => onRemove(note.id)}>
+                <DropdownMenuItem
+                    onClick={() => onUnarchived(note.id)}
+                    className="flex justify-between items-center"
+                >
+                    Unarchive
+                    <RxPinTop />
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                    onClick={() => onRemove(note.id)}
+                    className="flex justify-between items-center"
+                >
                     Delete
-                    <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
+                    <RxTrash />
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

@@ -1,24 +1,22 @@
 import { ComponentPropsWithoutRef } from "react";
-import { cn } from "@/utils";
+import { cn } from "@/utils/mergeClassnames";
 
 const Table = ({ className, ...props }: ComponentPropsWithoutRef<"table">) => (
-    <div className="w-full overflow-auto">
-        <table className={cn("w-full caption-top", className)} {...props} />
-    </div>
+    <table className={className} {...props} />
 );
 
 const TableCaption = ({
     className,
     ...props
 }: ComponentPropsWithoutRef<"caption">) => (
-    <caption className={cn("mb-1 text-2xl", className)} {...props} />
+    <caption className={className} {...props} />
 );
 
 const TableHeader = ({
     className,
     ...props
 }: ComponentPropsWithoutRef<"thead">) => (
-    <thead className={cn("[&_tr]:border-b", className)} {...props} />
+    <thead className={className} {...props} />
 );
 
 const TableBody = ({
@@ -44,7 +42,7 @@ const TableFooter = ({
 const TableRow = ({ className, ...props }: ComponentPropsWithoutRef<"tr">) => (
     <tr
         className={cn(
-            "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
+            "transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
             className
         )}
         {...props}

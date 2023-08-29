@@ -1,5 +1,5 @@
-import { useSearchParams } from "react-router-dom";
-import { MouseEvent } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, MouseEvent, useState } from "react";
 import { CategoryEnum } from "../notes-table/data/categories";
 import Dialog from "../../components/dialog/Dialog";
 import NameInput from "../../components/form/NameInput";
@@ -7,33 +7,41 @@ import CategoryInput from "../../components/form/CategoryInput";
 import ContentInput from "../../components/form/ContentInput";
 import ErrorBlock from "../../components/form/ErrorBlock";
 import { useNoteForm } from "../../hooks/useNoteForm";
-import { useTableActions } from "../../hooks/useTableActions";
+import { useNoteTableActions } from "../../hooks/useNoteTableActions";
 import type { Note } from "../../redux/notes/types";
 import { useAppSelector } from "../../redux/hooks";
 import { selectActiveNotes } from "../../redux/notes/notesSlice";
 
 const NoteFormModal = () => {
-    const [searchParams, setSearchParams] = useSearchParams();
     const activeNotes = useAppSelector(selectActiveNotes);
-    let selectedNote: Note | undefined;
+    const [selectedNote, setSelectedNote] = useState<Note | null>(null);
+    const { id } = useParams();
+    const navigate = useNavigate();
 
-    const selectedNoteId = searchParams.get("note");
-    if (selectedNoteId) {
-        selectedNote = activeNotes.find((note) => note.id === selectedNoteId);
-    }
+    useEffect(() => {
+        if (id) {
+            const selectedNote = activeNotes.find((note) => note.id === id);
+            if (selectedNote) {
+                setSelectedNote(selectedNote);
+            }
+        }
+    }, [id]);
+
+    const defaultNoteData = {
+        name: "",
+        category: "Task",
+        content: "",
+    };
     const { formData, errors, validateFormData, handleChange, resetNoteForm } =
-        useNoteForm(selectedNote);
+        useNoteForm(selectedNote || defaultNoteData);
 
-    const { onAdd, onEdit } = useTableActions();
+    const { onAdd, onEdit } = useNoteTableActions();
 
     const handleClose = () => {
-        const selectedNoteId = searchParams.get("note");
-        if (selectedNoteId) {
-            searchParams.delete("note");
-            setSearchParams(searchParams);
+        if (selectedNote) {
+            setSelectedNote(null);
         }
-        searchParams.delete("createNote");
-        setSearchParams(searchParams);
+        navigate("/");
     };
 
     const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
@@ -42,7 +50,7 @@ const NoteFormModal = () => {
         if (!validatedFormData) return false;
 
         if (selectedNote) {
-            onEdit(selectedNote, validatedFormData);
+            onEdit(selectedNote.id, validatedFormData);
         } else {
             onAdd(validatedFormData);
         }
@@ -52,6 +60,7 @@ const NoteFormModal = () => {
 
     return (
         <Dialog
+            show={true}
             title={selectedNote ? "Edit note" : "Create note"}
             handleSubmit={handleSubmit}
             handleClose={handleClose}

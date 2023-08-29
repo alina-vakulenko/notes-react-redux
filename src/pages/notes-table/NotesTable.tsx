@@ -1,4 +1,3 @@
-import { useSearchParams } from "react-router-dom";
 import { useState } from "react";
 import {
     ColumnFiltersState,
@@ -15,22 +14,21 @@ import {
 import {
     selectActiveNotes,
     selectArchivedNotes,
-} from "../../redux/notes/notesSlice";
-import { useAppSelector } from "../../redux/hooks";
-import NoteFormModal from "../form-modal/NoteFormModal";
-import { columns } from "./columns";
+} from "@/redux/notes/notesSlice";
+import { useAppSelector } from "@/redux/hooks";
 import DataTable from "@/components/table/Table";
 import TablePagination from "@/components/table/TablePagination";
+import { useNoteTableActions } from "@/hooks/useNoteTableActions";
 import TableToolbar from "./TableToolbar";
+import { columns } from "./columns";
 
 const NotesTable = () => {
-    const [searchParams] = useSearchParams();
+    const { showArchivedNotes } = useNoteTableActions();
+
     const activeNotesList = useAppSelector(selectActiveNotes);
     const archivedNotesList = useAppSelector(selectArchivedNotes);
 
-    const showArchived = searchParams.has("withArchived");
-
-    const data = showArchived
+    const data = showArchivedNotes
         ? [...activeNotesList, ...archivedNotesList]
         : activeNotesList;
 
@@ -67,7 +65,6 @@ const NotesTable = () => {
             <TableToolbar table={table} />
             <DataTable table={table} />
             <TablePagination table={table} />
-            <NoteFormModal />
         </div>
     );
 };

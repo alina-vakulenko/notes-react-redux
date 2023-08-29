@@ -2,7 +2,7 @@ import { ComponentType } from "react";
 import { RxCheck, RxPlusCircled } from "react-icons/rx";
 import { Column } from "@tanstack/react-table";
 
-import { cn } from "@/utils";
+import { cn } from "@/utils/mergeClassnames";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -89,7 +89,7 @@ export default function TableFacetedFilter<TData, TValue>({
                     )}
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className=" bg-white w-[200px] p-0" align="start">
+            <PopoverContent className="w-[200px] p-0" align="start">
                 <Command>
                     <CommandInput placeholder={title} />
                     <CommandList>

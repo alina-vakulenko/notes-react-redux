@@ -1,6 +1,6 @@
 import { RxArrowDown, RxArrowUp, RxCaretSort, RxEyeNone } from "react-icons/rx";
 import { Column } from "@tanstack/react-table";
-import { cn } from "@/utils";
+import { cn } from "@/utils/mergeClassnames";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -32,7 +32,7 @@ export default function TableColumnHeader<TData, TValue>({
                     <Button
                         variant="ghost"
                         size="sm"
-                        className="-ml-3 h-8 data-[state=open]:bg-accent"
+                        className="h-8 data-[state=open]:bg-accent"
                     >
                         <span>{title}</span>
                         {column.getIsSorted() === "desc" ? (

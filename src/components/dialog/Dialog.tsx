@@ -1,30 +1,31 @@
 import { useRef, useEffect, MouseEvent, ReactNode } from "react";
-import { useSearchParams } from "react-router-dom";
 import { BsX } from "react-icons/bs";
 import Button from "../button/Button";
 
 type ModalProps = {
+    show: boolean;
     title?: string;
     handleSubmit: (e: MouseEvent<HTMLButtonElement>) => boolean;
     handleClose: () => void;
     children: ReactNode;
 };
 
-const Dialog = ({ title, handleSubmit, handleClose, children }: ModalProps) => {
+const Dialog = ({
+    show,
+    title,
+    handleSubmit,
+    handleClose,
+    children,
+}: ModalProps) => {
     const dialogRef = useRef<HTMLDialogElement | null>(null);
-    const [searchParams] = useSearchParams();
-    const showDialog =
-        searchParams.has("createNote") || searchParams.has("note");
+    const cancelButtonRef = useRef<HTMLButtonElement | null>(null);
 
     useEffect(() => {
-        if (showDialog) {
-            dialogRef.current?.showModal();
-            document.body.classList.add("overflow-hidden");
-        } else {
-            dialogRef.current?.close();
-            document.body.classList.remove("overflow-hidden");
-        }
-    }, [showDialog]);
+        cancelButtonRef.current?.focus();
+
+        dialogRef.current?.showModal();
+        document.body.classList.add("overflow-hidden");
+    }, []);
 
     const closeDialog = () => {
         dialogRef.current?.close();
@@ -61,7 +62,7 @@ const Dialog = ({ title, handleSubmit, handleClose, children }: ModalProps) => {
         }
     };
 
-    const dialog: JSX.Element | null = showDialog ? (
+    return show ? (
         <dialog
             ref={dialogRef}
             onClose={closeDialog}
@@ -86,7 +87,13 @@ const Dialog = ({ title, handleSubmit, handleClose, children }: ModalProps) => {
                 {children}
             </div>
             <div className="flex justify-end gap-3 px-6 py-2">
-                <Button onClick={cancelDialog}>Cancel</Button>
+                <button
+                    type="reset"
+                    ref={cancelButtonRef}
+                    onClick={cancelDialog}
+                >
+                    Cancel
+                </button>
                 <Button
                     onClick={(e: MouseEvent<HTMLButtonElement>) =>
                         submitDialog(e)
@@ -97,8 +104,6 @@ const Dialog = ({ title, handleSubmit, handleClose, children }: ModalProps) => {
             </div>
         </dialog>
     ) : null;
-
-    return dialog;
 };
 
 export default Dialog;

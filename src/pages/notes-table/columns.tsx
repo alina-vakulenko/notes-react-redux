@@ -1,8 +1,8 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import TableColumnHeader from "@/components/table/TableColumnHeader";
-import type { Note } from "../../redux/notes/types";
-import { getFormattedDate } from "../../utils/getFormattedDate";
+import type { Note } from "@/redux/notes/types";
+import { getFormattedDate } from "@/utils/getFormattedDate";
 import TableRowActions from "./TableRowActions";
 
 export const columns: ColumnDef<Note>[] = [
@@ -52,11 +52,25 @@ export const columns: ColumnDef<Note>[] = [
         accessorKey: "category",
     },
     {
-        header: "Content",
+        header: ({ column }) => (
+            <TableColumnHeader
+                column={column}
+                title="Content"
+                className="text-start"
+            />
+        ),
         accessorKey: "content",
+        enableSorting: false,
+        enableHiding: false,
     },
     {
-        header: "Dates",
+        header: ({ column }) => (
+            <TableColumnHeader
+                column={column}
+                title="Dates"
+                className="text-start"
+            />
+        ),
         accessorKey: "dates",
         cell: ({ row }) => {
             const items = String(row.getValue("dates")).split(", ");
@@ -75,6 +89,8 @@ export const columns: ColumnDef<Note>[] = [
             }
             return result;
         },
+        enableSorting: false,
+        enableHiding: false,
     },
     {
         id: "actions",
