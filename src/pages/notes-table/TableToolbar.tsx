@@ -1,5 +1,5 @@
+import { ChangeEvent } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Table } from "@tanstack/react-table";
 import { RxCross2, RxPlusCircled } from "react-icons/rx";
 
 import { Button } from "@/components/ui/button";
@@ -9,43 +9,58 @@ import { Label } from "@/components/ui/label";
 import DataTableFacetedFilter from "@/components/table/TableFilter";
 import { useNoteTableActions } from "@/hooks/useNoteTableActions";
 import { categories } from "./data/categories";
+import { ITableColumn } from "./NotesTable";
 
-interface TableToolbarProps<TData> {
-    table: Table<TData>;
+interface TableToolbarProps {
+    isFiltered: boolean;
+    resetFilters: () => void;
+    getColumnByKey: (accessorKey: string) => ITableColumn | undefined;
+    getFacetedFilterData: (column: ITableColumn) => {
+        facets: Map<any, number> | undefined;
+        selectedValues: Set<string>;
+        clearColumnFilter: () => void;
+        setColumnFilter: (values: string[]) => void;
+    };
+    getInputFilterData: (column: ITableColumn) => {
+        value: string;
+        onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+    };
 }
 
-export default function TableToolbar<Note>({ table }: TableToolbarProps<Note>) {
+export default function TableToolbar({
+    isFiltered,
+    resetFilters,
+    getColumnByKey,
+    getFacetedFilterData,
+    getInputFilterData,
+}: TableToolbarProps) {
     const location = useLocation();
-    const isFiltered = table.getState().columnFilters.length > 0;
     const { showArchivedNotes, toggleShowArchivedNotes } =
         useNoteTableActions();
+    const nameColumn = getColumnByKey("name");
+    const categoryColumn = getColumnByKey("category");
+
     return (
         <div className="flex items-center justify-between">
             <div className="flex flex-1 items-center space-x-2">
-                <Input
-                    placeholder="Filter notes..."
-                    value={
-                        (table.getColumn("name")?.getFilterValue() as string) ??
-                        ""
-                    }
-                    onChange={(event) =>
-                        table
-                            .getColumn("name")
-                            ?.setFilterValue(event.target.value)
-                    }
-                    className="h-8 w-[150px] lg:w-[250px]"
-                />
-                {table.getColumn("category") && (
+                {nameColumn && (
+                    <Input
+                        placeholder="Filter notes..."
+                        className="h-8 w-[150px] lg:w-[250px]"
+                        {...getInputFilterData(nameColumn)}
+                    />
+                )}
+                {categoryColumn && (
                     <DataTableFacetedFilter
-                        column={table.getColumn("category")}
                         title="Category"
                         options={categories}
+                        {...getFacetedFilterData(categoryColumn)}
                     />
                 )}
                 {isFiltered && (
                     <Button
                         variant="ghost"
-                        onClick={() => table.resetColumnFilters()}
+                        onClick={resetFilters}
                         className="h-8 px-2 lg:px-3"
                     >
                         Reset
@@ -55,11 +70,11 @@ export default function TableToolbar<Note>({ table }: TableToolbarProps<Note>) {
             </div>
             <div className="flex items-center space-x-2">
                 <Switch
-                    id="show-archive"
+                    id="show-archived"
                     checked={showArchivedNotes}
                     onCheckedChange={toggleShowArchivedNotes}
                 />
-                <Label htmlFor="show-archive">Show archived notes</Label>
+                <Label htmlFor="show-archived">Show archived notes</Label>
             </div>
             <Link to="/create" state={{ backgroundLocation: location }}>
                 <Button variant="ghost" className="h-8 px-2 lg:px-3">

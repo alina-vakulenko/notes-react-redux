@@ -1,6 +1,5 @@
 import { ComponentType } from "react";
 import { RxCheck, RxPlusCircled } from "react-icons/rx";
-import { Column } from "@tanstack/react-table";
 
 import { cn } from "@/utils/mergeClassnames";
 import { Badge } from "@/components/ui/badge";
@@ -21,24 +20,27 @@ import {
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 
-interface TableFacetedFilter<TData, TValue> {
-    column?: Column<TData, TValue>;
+interface TableFacetedFilterProps {
     title?: string;
+    facets: Map<any, number> | undefined;
+    selectedValues: Set<string>;
     options: {
         label: string;
         value: string;
         icon?: ComponentType<{ className?: string }>;
     }[];
+    setColumnFilter: (values: string[]) => void;
+    clearColumnFilter: () => void;
 }
 
-export default function TableFacetedFilter<TData, TValue>({
-    column,
+export default function TableFacetedFilter({
     title,
     options,
-}: TableFacetedFilter<TData, TValue>) {
-    const facets = column?.getFacetedUniqueValues();
-    const selectedValues = new Set(column?.getFilterValue() as string[]);
-
+    facets,
+    selectedValues,
+    clearColumnFilter,
+    setColumnFilter,
+}: TableFacetedFilterProps) {
     return (
         <Popover>
             <PopoverTrigger asChild>
@@ -114,11 +116,9 @@ export default function TableFacetedFilter<TData, TValue>({
                                             }
                                             const filterValues =
                                                 Array.from(selectedValues);
-                                            column?.setFilterValue(
-                                                filterValues.length
-                                                    ? filterValues
-                                                    : undefined
-                                            );
+                                            filterValues.length
+                                                ? setColumnFilter(filterValues)
+                                                : clearColumnFilter();
                                         }}
                                     >
                                         <div
@@ -151,9 +151,7 @@ export default function TableFacetedFilter<TData, TValue>({
                                 <CommandSeparator />
                                 <CommandGroup>
                                     <CommandItem
-                                        onSelect={() =>
-                                            column?.setFilterValue(undefined)
-                                        }
+                                        onSelect={clearColumnFilter}
                                         className="justify-center text-center"
                                     >
                                         Clear filters
