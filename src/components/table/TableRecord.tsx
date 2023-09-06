@@ -1,23 +1,32 @@
 import { TableRow, TableCell } from "@/components/ui/table";
-import { Row, flexRender } from "@tanstack/react-table";
+import { ReactNode } from "react";
+import { Cell } from "@tanstack/react-table";
 
-interface TableRowProps<TData>
+type ITableCell<TData, TValue> = Cell<TData, TValue>;
+
+interface TableRowProps<TData, TValue>
     extends React.HTMLAttributes<HTMLTableRowElement> {
-    row: Row<TData>;
+    isSelected: boolean;
+    cells: ITableCell<TData, TValue>[];
+    renderCell: (cell: ITableCell<TData, TValue>) => ReactNode;
 }
 
-export default function TableRecord<TData>({ row }: TableRowProps<TData>) {
+export default function TableRecord<TData>({
+    cells,
+    renderCell,
+    isSelected,
+}: TableRowProps<TData, TValue>) {
     return (
         <TableRow
-            data-state={row.getIsSelected() && "selected"}
+            data-state={isSelected && "selected"}
             className="bg-slate-100 border-b-2 border-b-transparent"
         >
-            {row.getVisibleCells().map((cell) => (
+            {cells.map((cell) => (
                 <TableCell
                     key={cell.id}
                     className="p-2 first-of-type:font-semibold overflow-hidden text-ellipsis"
                 >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    {renderCell(cell)}
                 </TableCell>
             ))}
         </TableRow>

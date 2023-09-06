@@ -1,42 +1,41 @@
 import { ChangeEvent } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { RxCross2, RxPlusCircled } from "react-icons/rx";
+import { Column } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import DataTableFacetedFilter from "@/components/table/TableFilter";
-import { useNoteTableActions } from "@/hooks/useNoteTableActions";
+import { useRowActions } from "@/hooks/useRowActions";
 import { categories } from "./data/categories";
-import { ITableColumn } from "./NotesTable";
 
-interface TableToolbarProps {
+interface TableToolbarProps<TData> {
     isFiltered: boolean;
     resetFilters: () => void;
-    getColumnByKey: (accessorKey: string) => ITableColumn | undefined;
-    getFacetedFilterData: (column: ITableColumn) => {
-        facets: Map<any, number> | undefined;
+    getColumnByKey: (accessorKey: string) => Column<TData> | undefined;
+    getFacetedFilterData: (column: Column<TData>) => {
+        facets: Map<string, number> | undefined;
         selectedValues: Set<string>;
         clearColumnFilter: () => void;
         setColumnFilter: (values: string[]) => void;
     };
-    getInputFilterData: (column: ITableColumn) => {
+    getInputFilterData: (column: Column<TData>) => {
         value: string;
         onChange: (event: ChangeEvent<HTMLInputElement>) => void;
     };
 }
 
-export default function TableToolbar({
+export default function TableToolbar<TData>({
     isFiltered,
     resetFilters,
     getColumnByKey,
     getFacetedFilterData,
     getInputFilterData,
-}: TableToolbarProps) {
+}: TableToolbarProps<TData>) {
     const location = useLocation();
-    const { showArchivedNotes, toggleShowArchivedNotes } =
-        useNoteTableActions();
+    const { showArchived, toggleShowArchivedParams } = useRowActions();
     const nameColumn = getColumnByKey("name");
     const categoryColumn = getColumnByKey("category");
 
@@ -71,8 +70,8 @@ export default function TableToolbar({
             <div className="flex items-center space-x-2">
                 <Switch
                     id="show-archived"
-                    checked={showArchivedNotes}
-                    onCheckedChange={toggleShowArchivedNotes}
+                    checked={showArchived}
+                    onCheckedChange={toggleShowArchivedParams}
                 />
                 <Label htmlFor="show-archived">Show archived notes</Label>
             </div>

@@ -1,5 +1,4 @@
 import { RxArrowDown, RxArrowUp, RxCaretSort, RxEyeNone } from "react-icons/rx";
-import { Column } from "@tanstack/react-table";
 import { cn } from "@/utils/mergeClassnames";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,18 +9,28 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-interface TableColumnHeaderProps<TData, TValue>
-    extends React.HTMLAttributes<HTMLDivElement> {
-    column: Column<TData, TValue>;
+import { SortDirection } from "@/hooks/useColumnActions";
+
+interface TableColumnHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
     title: string;
+    canBeSorted: boolean;
+    isSorted: false | SortDirection;
+    isVisible: boolean;
+    toggleColumnVisibility: (isVisible: boolean) => void;
+    sortColumn: (direction: SortDirection) => void;
+    className?: string;
 }
 
-export default function TableColumnHeader<TData, TValue>({
-    column,
+export default function TableColumnHeader({
     title,
+    canBeSorted,
+    isSorted,
+    isVisible,
     className,
-}: TableColumnHeaderProps<TData, TValue>) {
-    if (!column.getCanSort()) {
+    sortColumn,
+    toggleColumnVisibility,
+}: TableColumnHeaderProps) {
+    if (!canBeSorted) {
         return <div className={cn(className)}>{title}</div>;
     }
 
@@ -35,9 +44,9 @@ export default function TableColumnHeader<TData, TValue>({
                         className="h-8 data-[state=open]:bg-accent"
                     >
                         <span>{title}</span>
-                        {column.getIsSorted() === "desc" ? (
+                        {isSorted === "desc" ? (
                             <RxArrowDown className="ml-2 h-4 w-4" />
-                        ) : column.getIsSorted() === "asc" ? (
+                        ) : isSorted === "asc" ? (
                             <RxArrowUp className="ml-2 h-4 w-4" />
                         ) : (
                             <RxCaretSort className="ml-2 h-4 w-4" />
@@ -45,21 +54,17 @@ export default function TableColumnHeader<TData, TValue>({
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="bg-white">
-                    <DropdownMenuItem
-                        onClick={() => column.toggleSorting(false)}
-                    >
+                    <DropdownMenuItem onClick={() => sortColumn("asc")}>
                         <RxArrowUp className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
                         Asc
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                        onClick={() => column.toggleSorting(true)}
-                    >
+                    <DropdownMenuItem onClick={() => sortColumn("desc")}>
                         <RxArrowDown className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
                         Desc
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
-                        onClick={() => column.toggleVisibility(false)}
+                        onClick={() => toggleColumnVisibility(!isVisible)}
                     >
                         <RxEyeNone className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
                         Hide

@@ -4,6 +4,7 @@ import TableColumnHeader from "@/components/table/TableColumnHeader";
 import type { Note } from "@/redux/notes/types";
 import { getFormattedDate } from "@/utils/getFormattedDate";
 import TableRowActions from "./TableRowActions";
+import { useColumnActions } from "@/hooks/useColumnActions";
 
 export const columns: ColumnDef<Note>[] = [
     {
@@ -28,15 +29,17 @@ export const columns: ColumnDef<Note>[] = [
         enableHiding: false,
     },
     {
-        header: ({ column }) => (
-            <TableColumnHeader column={column} title="Name" />
-        ),
+        header: ({ column }) => {
+            const columnActions = useColumnActions(column);
+            return <TableColumnHeader title="Name" {...columnActions} />;
+        },
         accessorKey: "name",
     },
     {
-        header: ({ column }) => (
-            <TableColumnHeader column={column} title="Created" />
-        ),
+        header: ({ column }) => {
+            const columnActions = useColumnActions(column);
+            return <TableColumnHeader title="Created" {...columnActions} />;
+        },
         accessorKey: "created",
         cell: ({ row }) =>
             getFormattedDate(String(row.getValue("created")), {
@@ -46,31 +49,38 @@ export const columns: ColumnDef<Note>[] = [
             }),
     },
     {
-        header: ({ column }) => (
-            <TableColumnHeader column={column} title="Category" />
-        ),
+        header: ({ column }) => {
+            const columnActions = useColumnActions(column);
+            return <TableColumnHeader title="Category" {...columnActions} />;
+        },
         accessorKey: "category",
     },
     {
-        header: ({ column }) => (
-            <TableColumnHeader
-                column={column}
-                title="Content"
-                className="text-start"
-            />
-        ),
+        header: ({ column }) => {
+            const columnActions = useColumnActions(column);
+            return (
+                <TableColumnHeader
+                    title="Content"
+                    className="text-start"
+                    {...columnActions}
+                />
+            );
+        },
         accessorKey: "content",
         enableSorting: false,
         enableHiding: false,
     },
     {
-        header: ({ column }) => (
-            <TableColumnHeader
-                column={column}
-                title="Dates"
-                className="text-start"
-            />
-        ),
+        header: ({ column }) => {
+            const columnActions = useColumnActions(column);
+            return (
+                <TableColumnHeader
+                    title="Dates"
+                    className="text-start"
+                    {...columnActions}
+                />
+            );
+        },
         accessorKey: "dates",
         cell: ({ row }) => {
             const items = String(row.getValue("dates")).split(", ");
@@ -94,6 +104,6 @@ export const columns: ColumnDef<Note>[] = [
     },
     {
         id: "actions",
-        cell: ({ row }) => <TableRowActions row={row} />,
+        cell: ({ row }) => <TableRowActions data={row.original} />,
     },
 ];

@@ -22,7 +22,7 @@ import { Separator } from "@/components/ui/separator";
 
 interface TableFacetedFilterProps {
     title?: string;
-    facets: Map<any, number> | undefined;
+    facets: Map<string, number> | undefined;
     selectedValues: Set<string>;
     options: {
         label: string;

@@ -1,9 +1,21 @@
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 import { Note } from "@/redux/notes/types";
 
-export const useNoteForm = (currentNote: Partial<Note>) => {
-    const [formData, setFormData] = useState(currentNote);
+const defaultNoteData = {
+    name: "",
+    category: "Task",
+    content: "",
+};
+
+export const useNoteForm = (note: Note | null) => {
+    const [formData, setFormData] = useState<Partial<Note>>(defaultNoteData);
     const [errors, setErrors] = useState<string[]>([]);
+
+    useEffect(() => {
+        if (note) {
+            setFormData({ ...note });
+        }
+    }, [note]);
 
     const validateFormData = () => {
         if (formData.name && formData.category && formData.content) {
@@ -36,7 +48,7 @@ export const useNoteForm = (currentNote: Partial<Note>) => {
     };
 
     const resetNoteForm = () => {
-        setFormData({});
+        setFormData(defaultNoteData);
     };
 
     return {

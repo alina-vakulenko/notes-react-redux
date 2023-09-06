@@ -1,9 +1,4 @@
 import {
-    useReactTable,
-    TableOptions,
-    getCoreRowModel,
-} from "@tanstack/react-table";
-import {
     selectNotesStats,
     selectCategories,
 } from "../../redux/notes/notesSlice";
@@ -11,6 +6,7 @@ import { useAppSelector } from "../../redux/hooks";
 import { statTableIds, NoteStats, columns } from "./columns";
 import { CategoryEnum } from "../notes-table/data/categories";
 import DataTable from "@/components/table/Table";
+import { useTable } from "@/hooks/useTable";
 
 const SummaryNotesTable = () => {
     const notesStats = useAppSelector((state) => selectNotesStats(state));
@@ -27,14 +23,9 @@ const SummaryNotesTable = () => {
         })
     );
 
-    const tableOptions: TableOptions<NoteStats> = {
-        data,
-        columns,
-        getCoreRowModel: getCoreRowModel(),
-    };
-    const table = useReactTable(tableOptions);
+    const { rows, headerGroups } = useTable(data, columns);
 
-    return <DataTable table={table} />;
+    return <DataTable rows={rows} headerGroups={headerGroups} />;
 };
 
 export default SummaryNotesTable;

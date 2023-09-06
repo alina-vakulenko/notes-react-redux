@@ -28,16 +28,16 @@ interface TablePaginationProps {
 }
 
 export default function TablePagination({
+    currentPage,
     pageCount,
     pageSize,
     isPrevPage,
     isNextPage,
-    getPrevPage,
-    getNextPage,
-    currentPage,
-    setPage,
     tableRowsCount,
     tableSelectedRowsCount,
+    getPrevPage,
+    getNextPage,
+    setPage,
     setPageSize,
 }: TablePaginationProps) {
     return (

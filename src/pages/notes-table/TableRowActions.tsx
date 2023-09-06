@@ -1,5 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
-import { Row } from "@tanstack/react-table";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
     RxDotsHorizontal,
     RxTrash,
@@ -15,18 +14,37 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useNoteTableActions } from "@/hooks/useNoteTableActions";
+import { useRowActions } from "@/hooks/useRowActions";
+import type { Note } from "@/redux/notes/types";
 
-interface TableRowActionsProps<TData> {
-    row: Row<TData>;
+interface TableRowActionsProps {
+    data: Note;
 }
 
-export default function TableRowActions<Note>({
-    row,
-}: TableRowActionsProps<Note>) {
+export default function TableRowActions({ data }: TableRowActionsProps) {
     const location = useLocation();
-    const note = row.original;
-    const { onRemove, onArchived, onUnarchived } = useNoteTableActions();
+    const navigate = useNavigate();
+
+    const { onRemove, onArchived, onUnarchived } = useRowActions();
+
+    const handleEditClick = () => {
+        navigate(`/edit/${data.id}`, {
+            state: { backgroundLocation: location },
+        });
+    };
+
+    const handleDeleteNote = () => {
+        onRemove(data.id);
+    };
+
+    const handleArchiveNote = () => {
+        onArchived(data.id);
+    };
+
+    const handleUnarchiveNote = () => {
+        onUnarchived(data.id);
+    };
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -39,31 +57,29 @@ export default function TableRowActions<Note>({
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="bg-white w-[160px]">
-                <DropdownMenuItem className="flex justify-between items-center">
-                    <Link
-                        to={`/edit/${note.id}`}
-                        state={{ backgroundLocation: location }}
-                    >
-                        Edit
-                        <RxPencil1 />
-                    </Link>
+                <DropdownMenuItem
+                    onClick={handleEditClick}
+                    className="flex justify-between items-center"
+                >
+                    Edit
+                    <RxPencil1 />
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                    onClick={() => onArchived(note.id)}
+                    onClick={handleArchiveNote}
                     className="flex justify-between items-center"
                 >
                     Archive
                     <RxPinBottom />
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                    onClick={() => onUnarchived(note.id)}
+                    onClick={handleUnarchiveNote}
                     className="flex justify-between items-center"
                 >
                     Unarchive
                     <RxPinTop />
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                    onClick={() => onRemove(note.id)}
+                    onClick={handleDeleteNote}
                     className="flex justify-between items-center"
                 >
                     Delete

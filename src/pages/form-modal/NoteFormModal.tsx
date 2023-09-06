@@ -1,5 +1,5 @@
-import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, MouseEvent, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { CategoryEnum } from "../notes-table/data/categories";
 import Dialog from "../../components/dialog/Dialog";
 import NameInput from "../../components/form/NameInput";
@@ -7,7 +7,7 @@ import CategoryInput from "../../components/form/CategoryInput";
 import ContentInput from "../../components/form/ContentInput";
 import ErrorBlock from "../../components/form/ErrorBlock";
 import { useNoteForm } from "../../hooks/useNoteForm";
-import { useNoteTableActions } from "../../hooks/useNoteTableActions";
+import { useRowActions } from "../../hooks/useRowActions";
 import type { Note } from "../../redux/notes/types";
 import { useAppSelector } from "../../redux/hooks";
 import { selectActiveNotes } from "../../redux/notes/notesSlice";
@@ -15,27 +15,23 @@ import { selectActiveNotes } from "../../redux/notes/notesSlice";
 const NoteFormModal = () => {
     const activeNotes = useAppSelector(selectActiveNotes);
     const [selectedNote, setSelectedNote] = useState<Note | null>(null);
-    const { id } = useParams();
+    const params = useParams();
     const navigate = useNavigate();
 
     useEffect(() => {
+        const { id } = params;
         if (id) {
             const selectedNote = activeNotes.find((note) => note.id === id);
             if (selectedNote) {
                 setSelectedNote(selectedNote);
             }
         }
-    }, [id]);
+    }, [params]);
 
-    const defaultNoteData = {
-        name: "",
-        category: "Task",
-        content: "",
-    };
     const { formData, errors, validateFormData, handleChange, resetNoteForm } =
-        useNoteForm(selectedNote || defaultNoteData);
+        useNoteForm(selectedNote);
 
-    const { onAdd, onEdit } = useNoteTableActions();
+    const { onAdd, onEdit } = useRowActions();
 
     const handleClose = () => {
         if (selectedNote) {
@@ -66,14 +62,17 @@ const NoteFormModal = () => {
             handleClose={handleClose}
         >
             <form className="flex flex-col gap-3 w-full">
-                <NameInput value={formData.name} onChange={handleChange} />
+                <NameInput
+                    value={formData.name || ""}
+                    onChange={handleChange}
+                />
                 <CategoryInput
                     categories={Object.values(CategoryEnum)}
-                    value={formData.category}
+                    value={formData.category || ""}
                     onChange={handleChange}
                 />
                 <ContentInput
-                    value={formData.content}
+                    value={formData.content || ""}
                     onChange={handleChange}
                 />
                 {errors.length > 0 && <ErrorBlock errors={errors} />}

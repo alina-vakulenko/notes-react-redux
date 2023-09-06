@@ -72,8 +72,6 @@ export type IColDefinition<T> = ColumnDef<T>;
 export interface ITableBodyProps<T extends ITableDataItem> {
     columns: IColDefinition<T>[];
     rows: T[];
-    // actions?: IRowAction<T>[];
-    exampleRow?: T;
 }
 
 export interface ITableProps<T extends ITableDataItem>

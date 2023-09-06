@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
     noteAdded,
@@ -8,13 +9,21 @@ import {
 } from "../redux/notes/notesSlice";
 import { useAppDispatch } from "../redux/hooks";
 
-export const useNoteTableActions = () => {
+export const useRowActions = () => {
     const dispatch = useAppDispatch();
     const [searchParams, setSearchParams] = useSearchParams();
-    const showArchivedNotes = searchParams.has("withArchived");
+    const [showArchived, setShowArchived] = useState(false);
 
-    const toggleShowArchivedNotes = () => {
-        if (showArchivedNotes) {
+    useEffect(() => {
+        if (searchParams.has("withArchived")) {
+            setShowArchived(true);
+        } else {
+            setShowArchived(false);
+        }
+    }, [searchParams]);
+
+    const toggleShowArchivedParams = () => {
+        if (searchParams.has("withArchived")) {
             searchParams.delete("withArchived");
             setSearchParams(searchParams);
         } else {
@@ -55,7 +64,7 @@ export const useNoteTableActions = () => {
         onArchived,
         onUnarchived,
         onRemove,
-        showArchivedNotes,
-        toggleShowArchivedNotes,
+        showArchived,
+        toggleShowArchivedParams,
     };
 };

@@ -1,6 +1,22 @@
 import { Table } from "@tanstack/react-table";
 
-export function useTablePagination<TData>(table: Table<TData>) {
+interface TablePagination {
+    pageCount: number;
+    pageSize: number;
+    currentPage: number;
+    isPrevPage: boolean;
+    isNextPage: boolean;
+    tableRowsCount: number;
+    tableSelectedRowsCount: number;
+    setPage: (page: number) => void;
+    setPageSize: (value: number) => void;
+    getPrevPage: () => void;
+    getNextPage: () => void;
+}
+
+export function useReactTablePagination<TData>(
+    table: Table<TData>
+): TablePagination {
     const isPrevPage = !table.getCanPreviousPage();
     const isNextPage = !table.getCanNextPage();
     const getPrevPage = () => {
@@ -28,14 +44,14 @@ export function useTablePagination<TData>(table: Table<TData>) {
     return {
         pageCount,
         pageSize,
-        setPageSize,
         currentPage,
-        setPage,
         isPrevPage,
         isNextPage,
-        getPrevPage,
-        getNextPage,
         tableRowsCount,
         tableSelectedRowsCount,
+        setPage,
+        setPageSize,
+        getPrevPage,
+        getNextPage,
     };
 }
