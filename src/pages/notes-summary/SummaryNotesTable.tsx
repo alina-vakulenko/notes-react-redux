@@ -1,29 +1,29 @@
-import Table from "../../components/table";
-
 import {
     selectNotesStats,
     selectCategories,
 } from "../../redux/notes/notesSlice";
 import { useAppSelector } from "../../redux/hooks";
-import { colNames, statTableIds, NoteStats } from "./shape";
-import { CategoryType } from "../types";
+import { statTableIds, NoteStats, columns } from "./columns";
+import { CategoryEnum } from "../notes-table/data/categories";
+import DataTable from "@/components/table/Table";
+import { useTable } from "@/hooks/useTable";
 
-const SummaryNotesTable = () => {
+export default function SummaryNotesTable() {
     const notesStats = useAppSelector((state) => selectNotesStats(state));
     const categories = useAppSelector((state) => selectCategories(state));
 
-    const rows: NoteStats[] = [];
+    const data: NoteStats[] = [];
 
     categories.forEach((category) =>
-        rows.push({
-            id: statTableIds[category as CategoryType],
-            category: category as CategoryType,
+        data.push({
+            id: statTableIds[category as CategoryEnum],
+            category: category as CategoryEnum,
             active: notesStats[category].active,
             archived: notesStats[category].archived,
         })
     );
 
-    return <Table caption="Summary" columns={colNames} rows={rows} />;
-};
+    const { rows, headerGroups } = useTable(data, columns);
 
-export default SummaryNotesTable;
+    return <DataTable rows={rows} headerGroups={headerGroups} />;
+}

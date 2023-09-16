@@ -1,34 +1,80 @@
-import { ReactNode } from "react";
+import { ReactNode, ReactElement } from "react";
+import { ColumnDef } from "@tanstack/react-table";
 
 export interface ITableDataItem {
-    id: string | number;
+    id: string;
 }
 
-export interface ITableColumn<T extends ITableDataItem, K extends keyof T> {
-    key: K;
-    header: string;
-    align?: "center" | "start" | "end";
-    format?: (value: string) => string;
+export enum ActionEnum {
+    EDIT = "edit",
+    REMOVE = "remove",
+    TOGGLE_STATUS = "toggleStatus",
 }
 
-export interface ITableAction<K> {
-    key: K;
-    header: ReactNode;
-    cb: (id: string) => void;
-    align?: "center" | "start" | "end";
-}
+export type DataType =
+    | "string"
+    | "number"
+    | "boolean"
+    | "date"
+    | "link"
+    | "action"
+    | ReactElement;
 
-export interface ITableProps<T extends ITableDataItem, K extends keyof T, E> {
-    caption?: string;
+export type AlignVariant = "center" | "start" | "end";
+
+export type IActionCellProps = {
+    onClick: () => void;
+    children: ReactNode;
+    align?: AlignVariant;
+    isExample?: boolean;
+};
+
+export type IRowAction<T extends ITableDataItem> = {
+    key: ActionEnum;
+    type: DataType;
+    colName: string;
+    iconStart?: ReactNode;
+    iconEnd?: ReactNode;
+    info?: string;
+    align?: AlignVariant;
+    isExample?: boolean;
+    onClick: (data: T) => void;
+    children: ReactNode;
+};
+
+// export type IColDefinition<T extends ITableDataItem, K extends keyof T> = {
+//     key: K;
+//     type: DataType;
+//     colName: string;
+//     iconStart?: ReactNode;
+//     iconEnd?: ReactNode;
+//     info?: string;
+//     align?: AlignVariant;
+//     transform?: (value: T[K]) => DataType;
+// };
+
+export type IColDefinition<T> = ColumnDef<T>;
+// export interface ITableHeaderProps<
+//     T extends ITableDataItem,
+//     K extends keyof T
+// > {
+//     columns: IColDefinition<T, K>[];
+//     actions?: IRowAction<T>[];
+// }
+
+// export interface ITableRowProps<T extends ITableDataItem, K extends keyof T> {
+//     dataSchema: IColDefinition<>[];
+//     data: T;
+//     actions?: IRowAction<T>[];
+//     isExample?: boolean;
+// }
+
+export interface ITableBodyProps<T extends ITableDataItem> {
+    columns: IColDefinition<T>[];
     rows: T[];
-    columns: ITableColumn<T, K>[];
-    actions?: ITableAction<E>[];
-    exampleRow?: T;
-    hideHeader?: boolean;
 }
 
-export type ITableBodyProps<
-    T extends ITableDataItem,
-    K extends keyof T,
-    E
-> = Omit<ITableProps<T, K, E>, "caption">;
+export interface ITableProps<T extends ITableDataItem>
+    extends ITableBodyProps<T> {
+    caption?: string;
+}
