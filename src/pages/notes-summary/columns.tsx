@@ -9,9 +9,9 @@ export type NoteStats = {
 };
 
 export const statTableIds: Record<CategoryEnum, string> = {
-    Idea: "i3434",
-    Task: "t4545",
-    "Random Thought": "rs5656",
+    idea: "i3434",
+    task: "t4545",
+    random: "rs5656",
 };
 
 export const columns: ColumnDef<NoteStats>[] = [

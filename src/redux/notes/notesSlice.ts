@@ -4,7 +4,7 @@ import {
     nanoid,
     createSelector,
 } from "@reduxjs/toolkit";
-import { parseDates } from "../../utils/parseDates";
+import { parseDates } from "@/utils/parseDates";
 import { RootState } from "../store";
 import { initialState } from "./initialState";
 import { Note, NotesState } from "./types";

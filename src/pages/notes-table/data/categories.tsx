@@ -1,10 +1,10 @@
 export enum CategoryEnum {
-    Task = "Task",
-    Idea = "Idea",
-    "Random Thought" = "Random Thought",
+    TASK = "task",
+    IDEA = "idea",
+    "RANDOM_THOUGHT" = "random",
 }
 export const categories = [
-    { value: CategoryEnum.Idea, label: "Idea" },
-    { value: CategoryEnum.Task, label: "Task" },
-    { value: CategoryEnum["Random Thought"], label: "Random Thought" },
+    { value: CategoryEnum.IDEA, label: "idea" },
+    { value: CategoryEnum.TASK, label: "task" },
+    { value: CategoryEnum.RANDOM_THOUGHT, label: "random thought" },
 ];

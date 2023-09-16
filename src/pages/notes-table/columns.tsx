@@ -3,8 +3,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import TableColumnHeader from "@/components/table/TableColumnHeader";
 import type { Note } from "@/redux/notes/types";
 import { getFormattedDate } from "@/utils/getFormattedDate";
-import TableRowActions from "./TableRowActions";
-import { useColumnActions } from "@/hooks/useColumnActions";
+import TableRowActions from "./row-actions";
+import { useColumnActions } from "@/hooks/useReactTableColumnActions";
 
 export const columns: ColumnDef<Note>[] = [
     {
@@ -54,6 +54,9 @@ export const columns: ColumnDef<Note>[] = [
             return <TableColumnHeader title="Category" {...columnActions} />;
         },
         accessorKey: "category",
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id));
+        },
     },
     {
         header: ({ column }) => {

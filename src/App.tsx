@@ -1,9 +1,9 @@
 import { Routes, Route, useLocation } from "react-router-dom";
-import Layout from "./pages/Layout";
-import NotesTable from "./pages/notes-table/NotesTable";
-import SummaryNotesTable from "./pages/notes-summary/SummaryNotesTable";
-import NoteFormModal from "./pages/form-modal/NoteFormModal";
-import ErrorPage from "./pages/error/ErrorPage";
+import Layout from "@/pages/Layout";
+import NotesTable from "@/pages/notes-table/NotesTable";
+import SummaryNotesTable from "@/pages/notes-summary/SummaryNotesTable";
+import NoteFormModal from "@/pages/form-modal";
+import ErrorPage from "@/pages/error/ErrorPage";
 
 const App = () => {
     const location = useLocation();

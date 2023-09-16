@@ -11,15 +11,15 @@ interface TableRowProps<TData, TValue>
     renderCell: (cell: ITableCell<TData, TValue>) => ReactNode;
 }
 
-export default function TableRecord<TData>({
+export default function TableRecord<TData, TValue>({
+    isSelected,
     cells,
     renderCell,
-    isSelected,
 }: TableRowProps<TData, TValue>) {
     return (
         <TableRow
             data-state={isSelected && "selected"}
-            className="bg-slate-100 border-b-2 border-b-transparent"
+            className="border-b-2 border-b-transparent bg-slate-100"
         >
             {cells.map((cell) => (
                 <TableCell

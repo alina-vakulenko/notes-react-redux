@@ -6,8 +6,6 @@ interface TablePagination {
     currentPage: number;
     isPrevPage: boolean;
     isNextPage: boolean;
-    tableRowsCount: number;
-    tableSelectedRowsCount: number;
     setPage: (page: number) => void;
     setPageSize: (value: number) => void;
     getPrevPage: () => void;
@@ -37,18 +35,12 @@ export function useReactTablePagination<TData>(
         table.setPageIndex(page);
     };
 
-    const tableRowsCount = table.getFilteredRowModel().rows.length;
-    const tableSelectedRowsCount =
-        table.getFilteredSelectedRowModel().rows.length;
-
     return {
         pageCount,
         pageSize,
         currentPage,
         isPrevPage,
         isNextPage,
-        tableRowsCount,
-        tableSelectedRowsCount,
         setPage,
         setPageSize,
         getPrevPage,

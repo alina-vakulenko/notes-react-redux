@@ -2,16 +2,17 @@ import { useEffect, useState } from "react";
 import { selectActiveNotes, selectNotes } from "@/redux/notes/notesSlice";
 import { useAppSelector } from "@/redux/hooks";
 import DataTable from "@/components/table/Table";
-import TablePagination from "@/components/table/TablePagination";
 import { useRowActions } from "@/hooks/useRowActions";
-import TableToolbar from "./TableToolbar";
+import TableToolbar from "./toolbar";
 import { columns } from "./columns";
 import type { Note } from "@/redux/notes/types";
 import { useTable } from "@/hooks/useTable";
 import { useReactTablePagination } from "@/hooks/useReactTablePagination";
-import { useReactTableFilters } from "@/hooks/useReactTableFilters";
+import { useReactTableHelpers } from "@/hooks/useReactTableHelpers";
+import RowsCounter from "@/components/table/RowsCounter";
+import TablePagination from "@/components/table/pagination";
 
-const NotesTable = () => {
+export default function NotesTable() {
     const [data, setData] = useState<Note[]>([]);
     const { showArchived } = useRowActions();
     const activeNotesList = useAppSelector(selectActiveNotes);
@@ -27,15 +28,29 @@ const NotesTable = () => {
 
     const { table, rows, headerGroups } = useTable(data, columns);
     const paginationProps = useReactTablePagination(table);
-    const filterProps = useReactTableFilters(table);
+    const {
+        isTableFiltered,
+        resetTableFilters,
+        getColumnByKey,
+        tableRowsCount,
+        tableSelectedRowsCount,
+    } = useReactTableHelpers(table);
 
     return (
         <div className="w-full space-y-4">
-            <TableToolbar {...filterProps} />
-            <DataTable rows={rows} headerGroups={headerGroups} />
-            <TablePagination {...paginationProps} />
+            <TableToolbar
+                isTableFiltered={isTableFiltered}
+                resetTableFilters={resetTableFilters}
+                getColumnByKey={getColumnByKey}
+            />
+            <DataTable<Note> rows={rows} headerGroups={headerGroups} />
+            <div className="flex items-center justify-between px-2">
+                <RowsCounter
+                    tableRowsCount={tableRowsCount}
+                    tableSelectedRowsCount={tableSelectedRowsCount}
+                />
+                <TablePagination {...paginationProps} />
+            </div>
         </div>
     );
-};
-
-export default NotesTable;
+}

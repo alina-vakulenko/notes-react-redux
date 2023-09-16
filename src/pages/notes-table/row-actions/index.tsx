@@ -56,7 +56,7 @@ export default function TableRowActions({ data }: TableRowActionsProps) {
                     <span className="sr-only">Open menu</span>
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-white w-[160px]">
+            <DropdownMenuContent align="end" className="bg-popover w-[160px]">
                 <DropdownMenuItem
                     onClick={handleEditClick}
                     className="flex justify-between items-center"

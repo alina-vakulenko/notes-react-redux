@@ -32,7 +32,7 @@ export default function DataTable<TData>({
                             return (
                                 <TableHeaderCell
                                     key={header.id}
-                                    className="p-2 text-center text-white bg-slate-700"
+                                    className="p-2 text-center text-primary-foreground bg-primary"
                                 >
                                     {header.isPlaceholder
                                         ? null

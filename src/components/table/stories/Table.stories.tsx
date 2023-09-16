@@ -1,6 +1,6 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
-import Table from "./Table";
+import Table from "../Table";
 import * as TableRowStories from "./TableRow.stories";
 
 export const MockedState = {

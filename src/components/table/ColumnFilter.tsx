@@ -1,7 +1,7 @@
 import { ComponentType } from "react";
+import { Column } from "@tanstack/react-table";
 import { RxCheck, RxPlusCircled } from "react-icons/rx";
 
-import { cn } from "@/utils/mergeClassnames";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,28 +19,27 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
+import { cn } from "@/utils/mergeClassnames";
 
-interface TableFacetedFilterProps {
-    title?: string;
-    facets: Map<string, number> | undefined;
-    selectedValues: Set<string>;
+interface ColumnFilterProps<TData> {
+    title: string;
     options: {
-        label: string;
         value: string;
+        label: string;
         icon?: ComponentType<{ className?: string }>;
     }[];
-    setColumnFilter: (values: string[]) => void;
-    clearColumnFilter: () => void;
+    column: Column<TData>;
 }
-
-export default function TableFacetedFilter({
+export default function ColumnFilter<TData>({
+    column,
     title,
     options,
-    facets,
-    selectedValues,
-    clearColumnFilter,
-    setColumnFilter,
-}: TableFacetedFilterProps) {
+}: ColumnFilterProps<TData>) {
+    const columnValuesMap = column.getFacetedUniqueValues();
+    const selectedValues = new Set(column.getFilterValue() as string[]);
+    const clearColumnFilter = () => column.setFilterValue(undefined);
+    const setColumnFilter = (values: string[]) => column.setFilterValue(values);
+
     return (
         <Popover>
             <PopoverTrigger asChild>
@@ -50,7 +49,7 @@ export default function TableFacetedFilter({
                     className="h-8 border-dashed"
                 >
                     <RxPlusCircled className="mr-2 h-4 w-4" />
-                    {title}
+                    <span className="capitalize">{title}</span>
                     {selectedValues?.size > 0 && (
                         <>
                             <Separator
@@ -137,9 +136,11 @@ export default function TableFacetedFilter({
                                             <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />
                                         )}
                                         <span>{option.label}</span>
-                                        {facets?.get(option.value) && (
+                                        {columnValuesMap?.get(option.value) && (
                                             <span className="ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs">
-                                                {facets.get(option.value)}
+                                                {columnValuesMap.get(
+                                                    option.value
+                                                )}
                                             </span>
                                         )}
                                     </CommandItem>

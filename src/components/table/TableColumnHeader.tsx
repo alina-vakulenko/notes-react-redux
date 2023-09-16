@@ -9,7 +9,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { SortDirection } from "@/hooks/useColumnActions";
+import { SortDirection } from "@/hooks/useReactTableColumnActions";
 
 interface TableColumnHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
     title: string;

@@ -8,7 +8,7 @@ import { CategoryEnum } from "../notes-table/data/categories";
 import DataTable from "@/components/table/Table";
 import { useTable } from "@/hooks/useTable";
 
-const SummaryNotesTable = () => {
+export default function SummaryNotesTable() {
     const notesStats = useAppSelector((state) => selectNotesStats(state));
     const categories = useAppSelector((state) => selectCategories(state));
 
@@ -26,6 +26,4 @@ const SummaryNotesTable = () => {
     const { rows, headerGroups } = useTable(data, columns);
 
     return <DataTable rows={rows} headerGroups={headerGroups} />;
-};
-
-export default SummaryNotesTable;
+}

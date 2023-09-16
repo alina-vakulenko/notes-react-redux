@@ -1,26 +1,27 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import TableRow from "./TableRow";
+import TableRecord from "../TableRecord";
 
 const meta = {
-    component: TableRow,
+    component: TableRecord,
     title: "Generic Table/Row",
     tags: ["autodocs"],
-} satisfies Meta<typeof TableRow>;
+} satisfies Meta<typeof TableRecord>;
 
 export default meta;
 
-type Story = StoryObj<typeof TableRow>;
+type Story = StoryObj<typeof TableRecord>;
 
 export const Default: Story = {
     args: {
-        data: {
+        isSelected: false,
+        cells: {
             id: "0",
             name: "Shopping list",
             created: "April 20, 2021",
             category: "Task",
             content: "tomatoes, bread, eggs",
             dates: "",
-            archived: false,
+            archived: true,
         },
     },
 };
