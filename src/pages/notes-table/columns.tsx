@@ -1,10 +1,9 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
-import TableColumnHeader from "@/components/table/TableColumnHeader";
-import type { Note } from "@/redux/notes/types";
+import TableColumnHeader from "@/components/table/table-column-header/TableColumnHeader";
 import { getFormattedDate } from "@/utils/getFormattedDate";
 import TableRowActions from "./row-actions";
-import { useColumnActions } from "@/hooks/useReactTableColumnActions";
+import type { Note } from "@/redux/notes/types";
 
 export const columns: ColumnDef<Note>[] = [
     {
@@ -15,6 +14,7 @@ export const columns: ColumnDef<Note>[] = [
                 onCheckedChange={(value) =>
                     table.toggleAllPageRowsSelected(!!value)
                 }
+                className="border-primary-foreground"
                 aria-label="Select all"
             />
         ),
@@ -30,15 +30,13 @@ export const columns: ColumnDef<Note>[] = [
     },
     {
         header: ({ column }) => {
-            const columnActions = useColumnActions(column);
-            return <TableColumnHeader title="Name" {...columnActions} />;
+            return <TableColumnHeader title="Name" column={column} />;
         },
         accessorKey: "name",
     },
     {
         header: ({ column }) => {
-            const columnActions = useColumnActions(column);
-            return <TableColumnHeader title="Created" {...columnActions} />;
+            return <TableColumnHeader title="Created" column={column} />;
         },
         accessorKey: "created",
         cell: ({ row }) =>
@@ -50,8 +48,7 @@ export const columns: ColumnDef<Note>[] = [
     },
     {
         header: ({ column }) => {
-            const columnActions = useColumnActions(column);
-            return <TableColumnHeader title="Category" {...columnActions} />;
+            return <TableColumnHeader title="Category" column={column} />;
         },
         accessorKey: "category",
         filterFn: (row, id, value) => {
@@ -60,12 +57,11 @@ export const columns: ColumnDef<Note>[] = [
     },
     {
         header: ({ column }) => {
-            const columnActions = useColumnActions(column);
             return (
                 <TableColumnHeader
                     title="Content"
                     className="text-start"
-                    {...columnActions}
+                    column={column}
                 />
             );
         },
@@ -75,12 +71,11 @@ export const columns: ColumnDef<Note>[] = [
     },
     {
         header: ({ column }) => {
-            const columnActions = useColumnActions(column);
             return (
                 <TableColumnHeader
                     title="Dates"
                     className="text-start"
-                    {...columnActions}
+                    column={column}
                 />
             );
         },

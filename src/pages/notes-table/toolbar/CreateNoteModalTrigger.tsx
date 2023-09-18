@@ -8,12 +8,9 @@ export default function CreateNoteModalTrigger() {
 
     return (
         <Link to="/create" state={{ backgroundLocation: location }}>
-            <Button
-                variant="outline"
-                className="border-dashed h-8 px-2 lg:px-3"
-            >
+            <Button variant="outline" size="sm" className="h-8">
                 <RxPlusCircled className="mr-2 h-4 w-4" />
-                Add New Note
+                New Note
             </Button>
         </Link>
     );

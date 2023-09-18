@@ -1,17 +1,24 @@
 import { Column } from "@tanstack/react-table";
+import { ChangeEvent } from "react";
 
 export type SortDirection = "asc" | "desc";
 
 interface ColumnActions {
-    canBeSorted: boolean;
+    sortable: boolean;
+    hideable: boolean;
     isSorted: false | SortDirection;
     isVisible: boolean;
-    canBeHidden: boolean;
+    columnValuesMap: Map<string, number>;
+    columnFilteredValues: Set<string>;
+    searchValue: string;
     toggleColumnVisibility: (isVisible: boolean) => void;
     sortColumn: (direction: SortDirection) => void;
+    clearColumnFilter: () => void;
+    setColumnFilter: (values: string[]) => void;
+    onSearchInputChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const useColumnActions = <TData>(
+export const useReactTableColumnActions = <TData>(
     column: Column<TData>
 ): ColumnActions => {
     const toggleColumnVisibility = (isVisible: boolean) => {
@@ -26,17 +33,32 @@ export const useColumnActions = <TData>(
         }
     };
 
+    const columnValuesMap = column.getFacetedUniqueValues();
+    const columnFilteredValues = new Set(column.getFilterValue() as string[]);
+    const clearColumnFilter = () => column.setFilterValue(undefined);
+    const setColumnFilter = (values: string[]) => column.setFilterValue(values);
+
     const isSorted = column.getIsSorted();
     const isVisible = column.getIsVisible();
-    const canBeSorted = column.getCanSort();
-    const canBeHidden = column.getCanHide();
+    const sortable = column.getCanSort();
+    const hideable = column.getCanHide();
+
+    const searchValue = (column.getFilterValue() as string) ?? "";
+    const onSearchInputChange = (event: ChangeEvent<HTMLInputElement>) =>
+        column.setFilterValue(event.target.value);
 
     return {
-        toggleColumnVisibility,
-        sortColumn,
         isSorted,
         isVisible,
-        canBeSorted,
-        canBeHidden,
+        sortable,
+        hideable,
+        columnValuesMap,
+        columnFilteredValues,
+        searchValue,
+        onSearchInputChange,
+        sortColumn,
+        setColumnFilter,
+        clearColumnFilter,
+        toggleColumnVisibility,
     };
 };

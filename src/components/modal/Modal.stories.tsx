@@ -7,7 +7,7 @@ import Dialog from "./Modal";
 
 const ModalContent = () => {
     return (
-        <p className="bg-slate-200 h-48 w-full flex items-center justify-center text-3xl text-slate-500 rounded-lg">
+        <p className="bg-popover h-48 w-full flex items-center justify-center text-3xl text-foreground rounded-lg">
             Modal Content
         </p>
     );
@@ -17,6 +17,13 @@ const meta = {
     component: Dialog,
     title: "Dialog",
     decorators: [withRouter],
+    args: {
+        isOpen: true,
+        children: <ModalContent />,
+        onClose() {
+            console.log("Dialog closed");
+        },
+    },
     parameters: {
         reactRouter: reactRouterParameters({
             location: {
@@ -33,31 +40,8 @@ type Story = StoryObj<typeof meta>;
 
 export const WithTitle: Story = {
     args: {
-        show: true,
         title: "Dialog title",
-        handleSubmit(e) {
-            e.preventDefault();
-            console.log("Dialog submitted");
-            return true;
-        },
-        handleClose() {
-            console.log("Dialog closed");
-        },
-        children: <ModalContent />,
     },
 };
 
-export const WithoutTitle: Story = {
-    args: {
-        show: true,
-        handleSubmit(e) {
-            e.preventDefault();
-            console.log("Dialog submitted");
-            return true;
-        },
-        handleClose() {
-            console.log("Dialog closed");
-        },
-        children: <ModalContent />,
-    },
-};
+export const WithoutTitle: Story = {};

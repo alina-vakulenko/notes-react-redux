@@ -118,10 +118,6 @@ const selectActiveNotes = createSelector([selectNotes], (notes) =>
     notes.filter((note) => !note.archived)
 );
 
-// const selectArchivedNotes = createSelector([selectNotes], (notes) =>
-//     notes.filter((note) => note.archived)
-// );
-
 const selectNotesStats = createSelector(
     [(state) => state.notes.notesList],
     (notes) => {

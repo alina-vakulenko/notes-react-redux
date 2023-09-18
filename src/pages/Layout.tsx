@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import ThemeSwitch from "@/components/ThemeSwitch";
+import ThemeSwitch from "@/components/theme-switch/ThemeSwitch";
 
 export default function Layout() {
     return (

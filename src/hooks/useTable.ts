@@ -43,14 +43,5 @@ export function useTable<TData>(data: TData[], columns: ColumnDef<TData>[]) {
         },
     });
 
-    const rows = table.getRowModel().rows;
-    const headerGroups = table.getHeaderGroups();
-    const cols = table.getAllColumns();
-
-    return {
-        table,
-        rows,
-        cols,
-        headerGroups,
-    };
+    return { table };
 }

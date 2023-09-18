@@ -55,7 +55,7 @@ const TableHeaderCell = ({
 }: ComponentPropsWithoutRef<"th">) => (
     <th
         className={cn(
-            "h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0",
+            "h-12 px-4 text-left align-middle font-medium [&:has([role=checkbox])]:pr-2",
             className
         )}
         {...props}
@@ -65,7 +65,7 @@ const TableHeaderCell = ({
 const TableCell = ({ className, ...props }: ComponentPropsWithoutRef<"td">) => (
     <td
         className={cn(
-            "p-4 align-middle [&:has([role=checkbox])]:pr-0",
+            "p-4 align-middle [&:has([role=checkbox])]:pr-2",
             className
         )}
         {...props}

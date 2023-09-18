@@ -5,7 +5,7 @@ import {
 import { useAppSelector } from "../../redux/hooks";
 import { statTableIds, NoteStats, columns } from "./columns";
 import { CategoryEnum } from "../notes-table/data/categories";
-import DataTable from "@/components/table/Table";
+import DataTable from "@/components/table/data-table/DataTable";
 import { useTable } from "@/hooks/useTable";
 
 export default function SummaryNotesTable() {
