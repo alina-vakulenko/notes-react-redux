@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { CategoryEnum, categories } from "../notes-table/data/categories";
 
 const formSchema = z.object({
     name: z
@@ -35,17 +36,44 @@ interface NoteFormProps {
     onSubmit: (data: FormInputs) => void;
 }
 
+interface CategoriesProps {
+    selectedValue: CategoryEnum;
+    onChange: (value: CategoryEnum) => void;
+}
+const Categories = ({ selectedValue, onChange }: CategoriesProps) => {
+    return (
+        <RadioGroup
+            onValueChange={onChange}
+            className="flex flex-col space-y-0"
+            value={selectedValue}
+        >
+            {categories.map((category) => (
+                <FormItem
+                    key={category.value}
+                    className="flex items-center space-x-3 space-y-0"
+                >
+                    <FormControl>
+                        <RadioGroupItem value={category.value} />
+                    </FormControl>
+                    <FormLabel className="capitalize">
+                        {category.label}
+                    </FormLabel>
+                </FormItem>
+            ))}
+        </RadioGroup>
+    );
+};
+
 export default function NoteForm({ defaultData, onSubmit }: NoteFormProps) {
     const form = useForm<FormInputs>({
         resolver: zodResolver(formSchema),
-        defaultValues: defaultData,
+        values: { ...defaultData },
     });
-
     return (
         <Form {...form}>
             <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="flex flex-col gap-3 w-full"
+                className="flex flex-col gap-3 w-full text-foreground"
             >
                 <FormField
                     control={form.control}
@@ -68,36 +96,10 @@ export default function NoteForm({ defaultData, onSubmit }: NoteFormProps) {
                         <FormItem className="space-y-1">
                             <FormLabel>Category</FormLabel>
                             <FormControl>
-                                <RadioGroup
-                                    onValueChange={field.onChange}
-                                    defaultValue={field.value}
-                                    className="flex flex-col space-y-0"
-                                >
-                                    <FormItem className="flex items-center space-x-3 space-y-0">
-                                        <FormControl>
-                                            <RadioGroupItem value="task" />
-                                        </FormControl>
-                                        <FormLabel className="font-normal capitalize">
-                                            task
-                                        </FormLabel>
-                                    </FormItem>
-                                    <FormItem className="flex items-center space-x-3 space-y-0">
-                                        <FormControl>
-                                            <RadioGroupItem value="idea" />
-                                        </FormControl>
-                                        <FormLabel className="font-normal capitalize">
-                                            idea
-                                        </FormLabel>
-                                    </FormItem>
-                                    <FormItem className="flex items-center space-x-3 space-y-0">
-                                        <FormControl>
-                                            <RadioGroupItem value="random" />
-                                        </FormControl>
-                                        <FormLabel className="font-normal capitalize">
-                                            random thought
-                                        </FormLabel>
-                                    </FormItem>
-                                </RadioGroup>
+                                <Categories
+                                    selectedValue={field.value as CategoryEnum}
+                                    onChange={field.onChange}
+                                />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -123,7 +125,13 @@ export default function NoteForm({ defaultData, onSubmit }: NoteFormProps) {
                     )}
                 />
 
-                <Button type="submit">Submit</Button>
+                <Button
+                    type="submit"
+                    size="lg"
+                    className="text-lg ms-auto hover:bg-primary/90"
+                >
+                    Save
+                </Button>
             </form>
         </Form>
     );

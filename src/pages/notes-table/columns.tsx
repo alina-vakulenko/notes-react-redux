@@ -4,6 +4,29 @@ import TableColumnHeader from "@/components/table/table-column-header/TableColum
 import { getFormattedDate } from "@/utils/getFormattedDate";
 import TableRowActions from "./row-actions";
 import type { Note } from "@/redux/notes/types";
+import { categories } from "./data/categories";
+import { cn } from "@/utils/mergeClassnames";
+
+const DataCell = ({
+    value,
+    isArchived,
+    className,
+}: {
+    value: string;
+    isArchived: boolean;
+    className?: string;
+}) => {
+    return (
+        <span
+            className={cn(
+                className,
+                isArchived && "line-through text-muted-foreground"
+            )}
+        >
+            {value}
+        </span>
+    );
+};
 
 export const columns: ColumnDef<Note>[] = [
     {
@@ -14,7 +37,6 @@ export const columns: ColumnDef<Note>[] = [
                 onCheckedChange={(value) =>
                     table.toggleAllPageRowsSelected(!!value)
                 }
-                className="border-primary-foreground"
                 aria-label="Select all"
             />
         ),
@@ -32,6 +54,12 @@ export const columns: ColumnDef<Note>[] = [
         header: ({ column }) => {
             return <TableColumnHeader title="Name" column={column} />;
         },
+        cell: ({ row }) => {
+            const { archived } = row.original;
+            return (
+                <DataCell value={row.getValue("name")} isArchived={archived} />
+            );
+        },
         accessorKey: "name",
     },
     {
@@ -39,16 +67,33 @@ export const columns: ColumnDef<Note>[] = [
             return <TableColumnHeader title="Created" column={column} />;
         },
         accessorKey: "created",
-        cell: ({ row }) =>
-            getFormattedDate(String(row.getValue("created")), {
+        cell: ({ row }) => {
+            const { archived } = row.original;
+            const value = getFormattedDate(String(row.getValue("created")), {
                 month: "numeric",
                 day: "numeric",
                 year: "numeric",
-            }),
+            });
+            return <DataCell value={value} isArchived={archived} />;
+        },
     },
     {
         header: ({ column }) => {
             return <TableColumnHeader title="Category" column={column} />;
+        },
+        cell: ({ row, cell }) => {
+            const { archived } = row.original;
+            const label =
+                categories.find(
+                    (category) => category.value === cell.getValue()
+                )?.label ?? "";
+            return (
+                <DataCell
+                    value={label}
+                    isArchived={archived}
+                    className="capitalize"
+                />
+            );
         },
         accessorKey: "category",
         filterFn: (row, id, value) => {
@@ -57,30 +102,28 @@ export const columns: ColumnDef<Note>[] = [
     },
     {
         header: ({ column }) => {
+            return <TableColumnHeader title="Content" column={column} />;
+        },
+        cell: ({ row }) => {
+            const { archived } = row.original;
             return (
-                <TableColumnHeader
-                    title="Content"
-                    className="text-start"
-                    column={column}
+                <DataCell
+                    value={row.getValue("content")}
+                    isArchived={archived}
                 />
             );
         },
         accessorKey: "content",
-        enableSorting: false,
-        enableHiding: false,
+        enableSorting: true,
+        enableHiding: true,
     },
     {
         header: ({ column }) => {
-            return (
-                <TableColumnHeader
-                    title="Dates"
-                    className="text-start"
-                    column={column}
-                />
-            );
+            return <TableColumnHeader title="Dates" column={column} />;
         },
         accessorKey: "dates",
         cell: ({ row }) => {
+            const { archived } = row.original;
             const items = String(row.getValue("dates")).split(", ");
             let result = "";
             for (const item of items) {
@@ -95,10 +138,10 @@ export const columns: ColumnDef<Note>[] = [
                     result = result.concat(item, " ");
                 }
             }
-            return result;
+            return <DataCell value={result} isArchived={archived} />;
         },
-        enableSorting: false,
-        enableHiding: false,
+        enableSorting: true,
+        enableHiding: true,
     },
     {
         id: "actions",

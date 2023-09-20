@@ -1,6 +1,5 @@
 import {
     PaginationNavigation,
-    PaginationCurrentPage,
     PaginationSelectPageSize,
 } from "@/components/pagination";
 
@@ -28,20 +27,17 @@ export default function TablePagination({
     setPageSize,
 }: TablePaginationProps) {
     return (
-        <div className="flex items-center space-x-6 lg:space-x-8">
+        <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 space-x-2">
             <PaginationSelectPageSize
                 pageSize={pageSize}
                 setPageSize={setPageSize}
             />
-            <PaginationCurrentPage
-                currentPage={currentPage}
-                pageCount={pageCount}
-            />
             <PaginationNavigation
                 pageCount={pageCount}
-                setPage={setPage}
+                currentPage={currentPage}
                 isPrevPage={isPrevPage}
                 isNextPage={isNextPage}
+                setPage={setPage}
                 getPrevPage={getPrevPage}
                 getNextPage={getNextPage}
             />

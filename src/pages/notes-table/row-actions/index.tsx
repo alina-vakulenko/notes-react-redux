@@ -57,33 +57,39 @@ export default function TableRowActions({ data }: TableRowActionsProps) {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="bg-popover w-[160px]">
-                <DropdownMenuItem
-                    onClick={handleEditClick}
-                    className="flex justify-between items-center"
-                >
-                    Edit
-                    <RxPencil1 />
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                    onClick={handleArchiveNote}
-                    className="flex justify-between items-center"
-                >
-                    Archive
-                    <RxPinBottom />
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                    onClick={handleUnarchiveNote}
-                    className="flex justify-between items-center"
-                >
-                    Unarchive
-                    <RxPinTop />
-                </DropdownMenuItem>
+                {!data.archived && (
+                    <DropdownMenuItem
+                        onClick={handleEditClick}
+                        className="flex justify-between items-center"
+                    >
+                        Edit
+                        <RxPencil1 />
+                    </DropdownMenuItem>
+                )}
+                {!data.archived && (
+                    <DropdownMenuItem
+                        onClick={handleArchiveNote}
+                        className="flex justify-between items-center"
+                    >
+                        Archive
+                        <RxPinBottom />
+                    </DropdownMenuItem>
+                )}
+                {data.archived && (
+                    <DropdownMenuItem
+                        onClick={handleUnarchiveNote}
+                        className="flex justify-between items-center"
+                    >
+                        Unarchive
+                        <RxPinTop />
+                    </DropdownMenuItem>
+                )}
                 <DropdownMenuItem
                     onClick={handleDeleteNote}
                     className="flex justify-between items-center"
                 >
                     Delete
-                    <RxTrash />
+                    <RxTrash className="text-destructive" />
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

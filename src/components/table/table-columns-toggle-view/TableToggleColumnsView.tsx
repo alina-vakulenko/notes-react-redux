@@ -6,8 +6,6 @@ import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 
 interface TableToggleColumnsViewProps<TData> {
@@ -20,14 +18,16 @@ export default function TableToggleColumnsView<TData>({
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 border-dashed"
+                >
                     <RxMixerHorizontal className="mr-2 h-4 w-4" />
-                    View
+                    Columns
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[150px]">
-                <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
-                <DropdownMenuSeparator />
                 {columns.map((column) => {
                     return (
                         <DropdownMenuCheckboxItem

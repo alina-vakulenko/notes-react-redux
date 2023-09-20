@@ -37,14 +37,14 @@ export default function NotesTableToolbar({ table }: NotesTableToolbarProps) {
     } = useReactTableColumnActions(categoryColumn!);
 
     return (
-        <div className="space-y-2">
+        <div className="space-y-4">
             <div className="flex items-center justify-center">
                 <SearchByColumn
                     searchValue={searchValue}
                     onSearchInputChange={onSearchInputChange}
                 />
             </div>
-            <div className="flex items-center flex-col sm:flex-row gap-2">
+            <div className="flex items-center flex-col gap-4 sm:flex-row">
                 <div className="flex-1">
                     <ToggleRowsView
                         checked={showArchived}

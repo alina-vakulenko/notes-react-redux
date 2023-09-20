@@ -15,8 +15,9 @@ interface TablePagination {
 export function useReactTablePagination<TData>(
     table: Table<TData>
 ): TablePagination {
-    const isPrevPage = !table.getCanPreviousPage();
-    const isNextPage = !table.getCanNextPage();
+    const isPrevPage = table.getCanPreviousPage();
+    const isNextPage = table.getCanNextPage();
+
     const getPrevPage = () => {
         return table.previousPage();
     };

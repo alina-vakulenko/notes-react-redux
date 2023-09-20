@@ -34,17 +34,17 @@ export default function TableColumnHeader<TData>({
     } = useReactTableColumnActions(column);
 
     if (!sortable && !hideable) {
-        return <div className={cn(className)}>{title}</div>;
+        return <div className={cn("px-4", className)}>{title}</div>;
     }
 
     return (
-        <div className={cn("flex items-center space-x-2", className)}>
+        <div className={cn("flex items-center", className)}>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button
                         variant="ghost"
                         size="sm"
-                        className="h-8 data-[state=open]:bg-accent data-[state=open]:text-primary"
+                        className="h-8 data-[state=open]:bg-accent"
                     >
                         <span>{title}</span>
                         {isSorted === "desc" ? (

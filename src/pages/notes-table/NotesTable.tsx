@@ -37,13 +37,15 @@ export default function NotesTable() {
     return (
         <div className="w-full space-y-4">
             <TableToolbar table={table} />
-            <DataTable<Note> rows={rows} headerGroups={headerGroups} />
-            <div className="flex items-center justify-between px-2">
-                <RowsCounter
-                    tableRowsCount={tableRowsCount}
-                    tableSelectedRowsCount={tableSelectedRowsCount}
-                />
-                <TablePagination {...paginationProps} />
+            <div className="p-2 rounded-md border border-border space-y-4 bg-background">
+                <DataTable<Note> rows={rows} headerGroups={headerGroups} />
+                <div className="space-y-4 md:flex md:space-x-2 md:space-y-0 items-center justify-between">
+                    <RowsCounter
+                        tableRowsCount={tableRowsCount}
+                        tableSelectedRowsCount={tableSelectedRowsCount}
+                    />
+                    <TablePagination {...paginationProps} />
+                </div>
             </div>
         </div>
     );

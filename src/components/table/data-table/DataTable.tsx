@@ -4,9 +4,9 @@ import {
     Table,
     TableCaption,
     TableHeader,
+    TableHead,
     TableBody,
     TableRow,
-    TableHeaderCell,
     TableCell,
 } from "@/components/ui/table";
 
@@ -22,24 +22,21 @@ export default function DataTable<TData>({
     rows,
 }: DataTableProps<TData>) {
     return (
-        <Table className="table-auto border-collapse w-full whitespace-break-spaces overflow-x-auto">
+        <Table>
             {caption && <TableCaption>{caption}</TableCaption>}
             <TableHeader>
                 {headerGroups.map((headerGroup) => (
-                    <TableRow key={headerGroup.id}>
+                    <TableRow key={headerGroup.id} className="bg-background">
                         {headerGroup.headers.map((header) => {
                             return (
-                                <TableHeaderCell
-                                    key={header.id}
-                                    className="p-2 text-center text-primary-foreground bg-primary"
-                                >
+                                <TableHead key={header.id}>
                                     {header.isPlaceholder
                                         ? null
                                         : flexRender(
                                               header.column.columnDef.header,
                                               header.getContext()
                                           )}
-                                </TableHeaderCell>
+                                </TableHead>
                             );
                         })}
                     </TableRow>
@@ -51,12 +48,12 @@ export default function DataTable<TData>({
                         <TableRow
                             key={row.id}
                             data-state={row.getIsSelected() && "selected"}
-                            className="border-b-2 border-b-transparent bg-secondary"
+                            className="bg-background border-b dark:border-border hover:bg-secondary data-[state=selected]:bg-muted"
                         >
-                            {row.getAllCells().map((cell) => (
+                            {row.getVisibleCells().map((cell) => (
                                 <TableCell
                                     key={cell.id}
-                                    className="p-2 first-of-type:font-semibold overflow-hidden text-ellipsis"
+                                    className="p-2 overflow-hidden text-ellipsis"
                                 >
                                     {flexRender(
                                         cell.column.columnDef.cell,

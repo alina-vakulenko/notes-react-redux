@@ -44,7 +44,11 @@ export default function TableColumnFilter({
     return (
         <Popover>
             <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 border-dashed"
+                >
                     <LuFilter className="mr-2 h-4 w-4" />
                     <span className="capitalize">{title}</span>
                     {columnFilteredValues?.size > 0 && (
