@@ -3,18 +3,6 @@ import PaginationNavigation from "./PaginationNavigation";
 
 const meta: Meta<typeof PaginationNavigation> = {
     component: PaginationNavigation,
-    decorators: [
-        (Story) => (
-            <div
-                style={{
-                    display: "flex",
-                    justifyContent: "center",
-                }}
-            >
-                <Story />
-            </div>
-        ),
-    ],
     title: "Pagination/Navigation",
     tags: ["autodocs"],
 };
@@ -27,8 +15,5 @@ export const Default: Story = {
         pageCount: 100,
         isPrevPage: true,
         isNextPage: true,
-        // getPrevPage,
-        // getNextPage,
-        // setPage,
     },
 };

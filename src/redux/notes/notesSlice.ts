@@ -6,8 +6,8 @@ import {
 } from "@reduxjs/toolkit";
 import { parseDates } from "@/utils/parseDates";
 import { RootState } from "../store";
-import { initialState } from "./initialState";
-import { Note, NotesState } from "./types";
+import { initialState, type AppState } from "./initialState";
+import type { Note } from "./types";
 
 const notesSlice = createSlice({
     name: "notes",
@@ -74,12 +74,12 @@ const notesSlice = createSlice({
                 };
             },
         },
-        noteRemoved(state: NotesState, action: PayloadAction<string>) {
+        noteRemoved(state: AppState, action: PayloadAction<string>) {
             state.notesList = state.notesList.filter(
                 (note: Note) => note.id !== action.payload
             );
         },
-        noteArchived(state: NotesState, action: PayloadAction<string>) {
+        noteArchived(state: AppState, action: PayloadAction<string>) {
             const noteIndex: number = state.notesList.findIndex(
                 (note: Note) => note.id === action.payload
             );
@@ -87,7 +87,7 @@ const notesSlice = createSlice({
                 state.notesList[noteIndex].archived = true;
             }
         },
-        noteUnarchived(state: NotesState, action: PayloadAction<string>) {
+        noteUnarchived(state: AppState, action: PayloadAction<string>) {
             const noteIndex: number = state.notesList.findIndex(
                 (note: Note) => note.id === action.payload
             );
@@ -108,6 +108,12 @@ export const {
 
 const selectNotes = (state: RootState) => state.notes.notesList;
 
+// const selectSortedNotes = createSelector([selectNotes], (notes) =>
+//     notes.sort((a, b) => {
+//         return a.archived === b.archived ? 0 : a.archived ? 1 : -1;
+//     })
+// );
+
 const selectCategories = createSelector([selectNotes], (notes) => {
     const uniqueCategories = new Set<string>();
     notes.map((note) => uniqueCategories.add(note.category));
@@ -118,28 +124,25 @@ const selectActiveNotes = createSelector([selectNotes], (notes) =>
     notes.filter((note) => !note.archived)
 );
 
-const selectNotesStats = createSelector(
-    [(state) => state.notes.notesList],
-    (notes) => {
-        const result: {
-            [category: string]: Record<string, number>;
-        } = {};
+const selectNotesStats = createSelector([selectNotes], (notes) => {
+    const result: {
+        [category: string]: Record<string, number>;
+    } = {};
 
-        for (const note of notes) {
-            const category = note.category;
-            const status = note.archived ? "archived" : "active";
-            if (!result[category]) {
-                result[category] = {};
-            }
-            if (!result[category][status]) {
-                result[category][status] = 0;
-            }
-            result[category][status]++;
+    for (const note of notes) {
+        const category = note.category;
+        const status = note.archived ? "archived" : "active";
+        if (!result[category]) {
+            result[category] = {};
         }
-
-        return result;
+        if (!result[category][status]) {
+            result[category][status] = 0;
+        }
+        result[category][status]++;
     }
-);
+
+    return result;
+});
 
 export {
     notesSlice,

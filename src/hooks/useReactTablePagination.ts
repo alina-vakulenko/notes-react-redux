@@ -33,7 +33,7 @@ export function useReactTablePagination<TData>(
 
     const currentPage = table.getState().pagination.pageIndex + 1;
     const setPage = (page: number) => {
-        table.setPageIndex(page);
+        table.setPageIndex(page - 1);
     };
 
     return {

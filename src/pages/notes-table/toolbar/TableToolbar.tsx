@@ -1,14 +1,11 @@
 import { Table } from "@tanstack/react-table";
-
 import { categories } from "../data/categories";
 import type { Note } from "@/redux/notes/types";
 import ColumnFilter from "@/components/table/table-column-filter/TableColumnFilter";
 import SearchByColumn from "@/components/table/table-column-search/TableColumnSearch";
 import ResetTableFilters from "@/components/table/table-reset-filters-btn/TableResetFiltersBtn";
-import CreateNoteModalTrigger from "./CreateNoteModalTrigger";
-import ToggleRowsView from "@/components/table/table-rows-toggle-view/TableToggleRowsView";
-import ToggleColumnsView from "@/components/table/table-columns-toggle-view/TableToggleColumnsView";
-import { useRowActions } from "@/hooks/useRowActions";
+import ColumnsToggleMenu from "@/components/table/table-columns-toggle-menu/TableColumnsToggleMenu";
+import RowsToggleMenu from "@/components/table/table-rows-toggle-menu/TableRowsToggleMenu";
 import { useReactTableHelpers } from "@/hooks/useReactTableHelpers";
 import { useReactTableColumnActions } from "@/hooks/useReactTableColumnActions";
 
@@ -23,12 +20,13 @@ export default function NotesTableToolbar({ table }: NotesTableToolbarProps) {
         resetTableFilters,
         getColumnByKey,
     } = useReactTableHelpers(table);
-    const { showArchived, toggleShowArchivedParams } = useRowActions();
+
     const nameColumn = getColumnByKey("name");
     const categoryColumn = getColumnByKey("category");
     const { searchValue, onSearchInputChange } = useReactTableColumnActions(
         nameColumn!
     );
+
     const {
         columnValuesMap,
         columnFilteredValues,
@@ -37,37 +35,26 @@ export default function NotesTableToolbar({ table }: NotesTableToolbarProps) {
     } = useReactTableColumnActions(categoryColumn!);
 
     return (
-        <div className="space-y-4">
-            <div className="flex items-center justify-center">
-                <SearchByColumn
-                    searchValue={searchValue}
-                    onSearchInputChange={onSearchInputChange}
+        <div className="flex flex-col items-center space-y-4 sm:space-y-0 sm:flex-row sm:justify-between">
+            <SearchByColumn
+                searchValue={searchValue}
+                onSearchInputChange={onSearchInputChange}
+            />
+            <div className="flex items-center gap-2">
+                <RowsToggleMenu />
+                <ColumnsToggleMenu<Note> columns={hideableColumns} />
+                <ColumnFilter
+                    title="category"
+                    options={categories}
+                    columnValuesMap={columnValuesMap}
+                    columnFilteredValues={columnFilteredValues}
+                    clearColumnFilter={clearColumnFilter}
+                    setColumnFilter={setColumnFilter}
                 />
-            </div>
-            <div className="flex items-center flex-col gap-4 sm:flex-row">
-                <div className="flex-1">
-                    <ToggleRowsView
-                        checked={showArchived}
-                        onCheckedChange={toggleShowArchivedParams}
-                        label="Show archived notes"
-                    />
-                </div>
-                <div className="flex items-center justify-end gap-2">
-                    <ColumnFilter
-                        title="category"
-                        options={categories}
-                        columnValuesMap={columnValuesMap}
-                        columnFilteredValues={columnFilteredValues}
-                        clearColumnFilter={clearColumnFilter}
-                        setColumnFilter={setColumnFilter}
-                    />
-                    <ResetTableFilters
-                        isFiltered={isTableFiltered}
-                        resetFilters={resetTableFilters}
-                    />
-                    <ToggleColumnsView<Note> columns={hideableColumns} />
-                    <CreateNoteModalTrigger />
-                </div>
+                <ResetTableFilters
+                    isFiltered={isTableFiltered}
+                    resetFilters={resetTableFilters}
+                />
             </div>
         </div>
     );

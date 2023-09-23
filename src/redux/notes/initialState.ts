@@ -1,6 +1,10 @@
-import { NotesState } from "./types";
+import { Note } from "./types";
 
-export const initialState: NotesState = {
+export type AppState = {
+    notesList: Note[];
+};
+
+export const initialState: AppState = {
     notesList: [
         {
             id: "0",

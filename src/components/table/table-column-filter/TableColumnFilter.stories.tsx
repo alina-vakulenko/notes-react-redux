@@ -17,6 +17,14 @@ const meta: Meta<typeof TableColumnFilter> = {
     component: TableColumnFilter,
     title: "DataTable/Toolbar/Column Filter",
     tags: ["autodocs"],
+    // argTypes: {
+    //     options: {
+    //         control: "object",
+    //     },
+    //     columnValuesMap: {
+    //         control: "object",
+    //     },
+    // },
     args: {
         title: "priority",
         options,

@@ -3,7 +3,7 @@ import {
     reactRouterParameters,
     withRouter,
 } from "storybook-addon-react-router-v6";
-import Dialog from "./Modal";
+import Modal from "./Modal";
 
 const ModalContent = () => {
     return (
@@ -14,15 +14,12 @@ const ModalContent = () => {
 };
 
 const meta = {
-    component: Dialog,
-    title: "Dialog",
+    component: Modal,
+    title: "Modal",
     decorators: [withRouter],
     args: {
         isOpen: true,
         children: <ModalContent />,
-        onClose() {
-            console.log("Dialog closed");
-        },
     },
     parameters: {
         reactRouter: reactRouterParameters({
@@ -32,7 +29,7 @@ const meta = {
         }),
     },
     tags: ["autodocs"],
-} satisfies Meta<typeof Dialog>;
+} satisfies Meta<typeof Modal>;
 
 export default meta;
 
@@ -40,7 +37,7 @@ type Story = StoryObj<typeof meta>;
 
 export const WithTitle: Story = {
     args: {
-        title: "Dialog title",
+        title: "Title",
     },
 };
 

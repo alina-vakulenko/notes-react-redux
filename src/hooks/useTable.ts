@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
     ColumnFiltersState,
     SortingState,
@@ -22,17 +22,18 @@ export function useTable<TData>(data: TData[], columns: ColumnDef<TData>[]) {
     );
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
+    const memoizedColumns = useMemo(() => columns, []);
     const table = useReactTable({
         data,
-        columns,
+        columns: memoizedColumns,
         getCoreRowModel: getCoreRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
         onColumnVisibilityChange: setColumnVisibility,
         getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
         state: {

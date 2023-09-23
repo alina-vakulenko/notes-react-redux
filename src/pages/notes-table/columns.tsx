@@ -5,28 +5,7 @@ import { getFormattedDate } from "@/utils/getFormattedDate";
 import TableRowActions from "./row-actions";
 import type { Note } from "@/redux/notes/types";
 import { categories } from "./data/categories";
-import { cn } from "@/utils/mergeClassnames";
-
-const DataCell = ({
-    value,
-    isArchived,
-    className,
-}: {
-    value: string;
-    isArchived: boolean;
-    className?: string;
-}) => {
-    return (
-        <span
-            className={cn(
-                className,
-                isArchived && "line-through text-muted-foreground"
-            )}
-        >
-            {value}
-        </span>
-    );
-};
+import DataCell from "./DataCell";
 
 export const columns: ColumnDef<Note>[] = [
     {

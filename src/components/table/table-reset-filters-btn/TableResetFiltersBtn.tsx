@@ -12,12 +12,12 @@ export default function TableResetFiltersBtn({
 }: TableResetFiltersBtnProps) {
     return isFiltered ? (
         <Button
-            variant="ghost"
+            variant="outline"
             onClick={resetFilters}
-            className="h-8 px-2 lg:px-3"
+            className="h-8 border-dashed"
         >
+            <LuFilterX className="mr-2 h-4 w-4" />
             Reset
-            <LuFilterX className="ml-2 h-4 w-4" />
         </Button>
     ) : null;
 }

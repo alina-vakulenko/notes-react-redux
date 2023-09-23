@@ -1,5 +1,4 @@
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
@@ -16,30 +15,18 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { CategoryEnum, categories } from "../notes-table/data/categories";
-
-const formSchema = z.object({
-    name: z
-        .string()
-        .min(2, { message: "Name must be at least 2 characters." })
-        .max(50, { message: "Name must be max 50 characters." }),
-    category: z.enum(["task", "idea", "random"]),
-    content: z
-        .string()
-        .min(2, { message: "Content must be at least 2 characters." })
-        .max(100, "Content must be max 100 characters."),
-});
-
-export type FormInputs = z.infer<typeof formSchema>;
+import { NoteCreateInput, noteSchema } from "../notes-table/data/noteData";
 
 interface NoteFormProps {
-    defaultData: FormInputs;
-    onSubmit: (data: FormInputs) => void;
+    defaultData: NoteCreateInput;
+    onSubmit: (data: NoteCreateInput) => void;
 }
 
 interface CategoriesProps {
     selectedValue: CategoryEnum;
     onChange: (value: CategoryEnum) => void;
 }
+
 const Categories = ({ selectedValue, onChange }: CategoriesProps) => {
     return (
         <RadioGroup
@@ -65,8 +52,8 @@ const Categories = ({ selectedValue, onChange }: CategoriesProps) => {
 };
 
 export default function NoteForm({ defaultData, onSubmit }: NoteFormProps) {
-    const form = useForm<FormInputs>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<NoteCreateInput>({
+        resolver: zodResolver(noteSchema),
         values: { ...defaultData },
     });
     return (

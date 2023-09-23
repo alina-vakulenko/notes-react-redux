@@ -8,13 +8,13 @@ import {
     DropdownMenuContent,
 } from "@/components/ui/dropdown-menu";
 
-interface TableToggleColumnsViewProps<TData> {
+interface TableColumnsToggleMenuProps<TData> {
     columns: Column<TData>[];
 }
 
-export default function TableToggleColumnsView<TData>({
+export default function TableColumnsToggleMenu<TData>({
     columns,
-}: TableToggleColumnsViewProps<TData>) {
+}: TableColumnsToggleMenuProps<TData>) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>

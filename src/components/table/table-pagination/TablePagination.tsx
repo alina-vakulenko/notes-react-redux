@@ -27,7 +27,7 @@ export default function TablePagination({
     setPageSize,
 }: TablePaginationProps) {
     return (
-        <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 space-x-2">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-4">
             <PaginationSelectPageSize
                 pageSize={pageSize}
                 setPageSize={setPageSize}
