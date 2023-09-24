@@ -1,55 +1,58 @@
 import { useEffect, useState } from "react";
-import { selectActiveNotes, selectNotes } from "@/redux/notes/notesSlice";
 import { useAppSelector } from "@/redux/hooks";
-import DataTable from "@/components/table/Table";
-import { useRowActions } from "@/hooks/useRowActions";
-import TableToolbar from "./toolbar";
-import { columns } from "./columns";
-import type { Note } from "@/redux/notes/types";
+import { SEARCH_PARAMS_KEY, useRowFilters } from "@/hooks/useRowFilters";
 import { useTable } from "@/hooks/useTable";
 import { useReactTablePagination } from "@/hooks/useReactTablePagination";
 import { useReactTableHelpers } from "@/hooks/useReactTableHelpers";
-import RowsCounter from "@/components/table/RowsCounter";
-import TablePagination from "@/components/table/pagination";
+import DataTable from "@/components/table/data-table/DataTable";
+import RowsCounter from "@/components/table/table-rows-counter.tsx/TableRowsCounter";
+import TablePagination from "@/components/table/table-pagination/TablePagination";
+import { selectActiveNotes, selectNotes } from "@/redux/notes/notesSlice";
+import type { Note } from "@/redux/notes/types";
+import TableToolbar from "./toolbar/TableToolbar";
+import { columns } from "./columns";
 
 export default function NotesTable() {
+    const { rowsFilter } = useRowFilters();
     const [data, setData] = useState<Note[]>([]);
-    const { showArchived } = useRowActions();
-    const activeNotesList = useAppSelector(selectActiveNotes);
-    const allNotesList = useAppSelector(selectNotes);
+    const activeNotes = useAppSelector(selectActiveNotes);
+    const allNotes = useAppSelector(selectNotes);
 
     useEffect(() => {
-        if (showArchived) {
-            setData(allNotesList);
-        } else {
-            setData(activeNotesList);
-        }
-    }, [showArchived, activeNotesList, allNotesList]);
+        let filteredNotes = rowsFilter[SEARCH_PARAMS_KEY.WITH_ARCHIVED]
+            ? [...allNotes]
+            : [...activeNotes];
 
-    const { table, rows, headerGroups } = useTable(data, columns);
+        if (rowsFilter[SEARCH_PARAMS_KEY.DATES_ONLY]) {
+            filteredNotes = filteredNotes.filter(
+                (note) => note.dates.length > 0
+            );
+        }
+
+        const sortedFilteredNotes = [...filteredNotes].sort((a, b) =>
+            a.archived === b.archived ? 0 : a.archived > b.archived ? 1 : -1
+        );
+        setData(sortedFilteredNotes);
+    }, [rowsFilter, activeNotes, allNotes]);
+
+    const { table } = useTable(data, columns);
+
     const paginationProps = useReactTablePagination(table);
-    const {
-        isTableFiltered,
-        resetTableFilters,
-        getColumnByKey,
-        tableRowsCount,
-        tableSelectedRowsCount,
-    } = useReactTableHelpers(table);
+    const { tableRowsCount, tableSelectedRowsCount } =
+        useReactTableHelpers(table);
 
     return (
         <div className="w-full space-y-4">
-            <TableToolbar
-                isTableFiltered={isTableFiltered}
-                resetTableFilters={resetTableFilters}
-                getColumnByKey={getColumnByKey}
-            />
-            <DataTable<Note> rows={rows} headerGroups={headerGroups} />
-            <div className="flex items-center justify-between px-2">
-                <RowsCounter
-                    tableRowsCount={tableRowsCount}
-                    tableSelectedRowsCount={tableSelectedRowsCount}
-                />
-                <TablePagination {...paginationProps} />
+            <TableToolbar table={table} />
+            <div className="p-2 rounded-md border border-border space-y-4 bg-background">
+                <DataTable<Note> table={table} />
+                <div className="space-y-4 lg:flex md:space-x-2 md:space-y-0 items-center justify-between">
+                    <RowsCounter
+                        tableRowsCount={tableRowsCount}
+                        tableSelectedRowsCount={tableSelectedRowsCount}
+                    />
+                    <TablePagination {...paginationProps} />
+                </div>
             </div>
         </div>
     );

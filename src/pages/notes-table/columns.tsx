@@ -1,10 +1,11 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
-import TableColumnHeader from "@/components/table/TableColumnHeader";
-import type { Note } from "@/redux/notes/types";
+import TableColumnHeader from "@/components/table/table-column-header/TableColumnHeader";
 import { getFormattedDate } from "@/utils/getFormattedDate";
 import TableRowActions from "./row-actions";
-import { useColumnActions } from "@/hooks/useReactTableColumnActions";
+import type { Note } from "@/redux/notes/types";
+import { categories } from "./data/categories";
+import DataCell from "./DataCell";
 
 export const columns: ColumnDef<Note>[] = [
     {
@@ -30,28 +31,48 @@ export const columns: ColumnDef<Note>[] = [
     },
     {
         header: ({ column }) => {
-            const columnActions = useColumnActions(column);
-            return <TableColumnHeader title="Name" {...columnActions} />;
+            return <TableColumnHeader title="Name" column={column} />;
+        },
+        cell: ({ row }) => {
+            const { archived } = row.original;
+            return (
+                <DataCell value={row.getValue("name")} isArchived={archived} />
+            );
         },
         accessorKey: "name",
     },
     {
         header: ({ column }) => {
-            const columnActions = useColumnActions(column);
-            return <TableColumnHeader title="Created" {...columnActions} />;
+            return <TableColumnHeader title="Created" column={column} />;
         },
         accessorKey: "created",
-        cell: ({ row }) =>
-            getFormattedDate(String(row.getValue("created")), {
+        cell: ({ row }) => {
+            const { archived } = row.original;
+            const value = getFormattedDate(String(row.getValue("created")), {
                 month: "numeric",
                 day: "numeric",
                 year: "numeric",
-            }),
+            });
+            return <DataCell value={value} isArchived={archived} />;
+        },
     },
     {
         header: ({ column }) => {
-            const columnActions = useColumnActions(column);
-            return <TableColumnHeader title="Category" {...columnActions} />;
+            return <TableColumnHeader title="Category" column={column} />;
+        },
+        cell: ({ row, cell }) => {
+            const { archived } = row.original;
+            const label =
+                categories.find(
+                    (category) => category.value === cell.getValue()
+                )?.label ?? "";
+            return (
+                <DataCell
+                    value={label}
+                    isArchived={archived}
+                    className="capitalize"
+                />
+            );
         },
         accessorKey: "category",
         filterFn: (row, id, value) => {
@@ -60,32 +81,28 @@ export const columns: ColumnDef<Note>[] = [
     },
     {
         header: ({ column }) => {
-            const columnActions = useColumnActions(column);
+            return <TableColumnHeader title="Content" column={column} />;
+        },
+        cell: ({ row }) => {
+            const { archived } = row.original;
             return (
-                <TableColumnHeader
-                    title="Content"
-                    className="text-start"
-                    {...columnActions}
+                <DataCell
+                    value={row.getValue("content")}
+                    isArchived={archived}
                 />
             );
         },
         accessorKey: "content",
-        enableSorting: false,
-        enableHiding: false,
+        enableSorting: true,
+        enableHiding: true,
     },
     {
         header: ({ column }) => {
-            const columnActions = useColumnActions(column);
-            return (
-                <TableColumnHeader
-                    title="Dates"
-                    className="text-start"
-                    {...columnActions}
-                />
-            );
+            return <TableColumnHeader title="Dates" column={column} />;
         },
         accessorKey: "dates",
         cell: ({ row }) => {
+            const { archived } = row.original;
             const items = String(row.getValue("dates")).split(", ");
             let result = "";
             for (const item of items) {
@@ -100,10 +117,10 @@ export const columns: ColumnDef<Note>[] = [
                     result = result.concat(item, " ");
                 }
             }
-            return result;
+            return <DataCell value={result} isArchived={archived} />;
         },
-        enableSorting: false,
-        enableHiding: false,
+        enableSorting: true,
+        enableHiding: true,
     },
     {
         id: "actions",

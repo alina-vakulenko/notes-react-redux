@@ -1,5 +1,4 @@
 import type { Preview } from "@storybook/react";
-
 import { withThemeByClassName } from "@storybook/addon-styling";
 
 import "../src/index.css";
@@ -13,6 +12,7 @@ const preview: Preview = {
                 date: /Date$/,
             },
         },
+        layout: "centered",
     },
 
     decorators: [

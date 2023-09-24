@@ -7,7 +7,3 @@ export interface Note {
     dates: string;
     archived: boolean;
 }
-
-export interface NotesState {
-    notesList: Note[];
-}

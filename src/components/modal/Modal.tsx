@@ -68,15 +68,15 @@ const Dialog = ({ isOpen, title, onClose, children }: ModalProps) => {
             onClose={handleCloseModal}
             onClick={closeDialogIfClickedOutside}
             onKeyDown={handleKeyDown}
-            className="flex flex-col border-2 w-[500px] min-h-[350px] bg-popover rounded-lg backdrop:backdrop-blur-sm backdrop:bg-black-50"
+            className="flex flex-col border border-border shadow-lg w-2/3 sm:w-[500px] min-h-[350px] bg-background rounded-lg backdrop:backdrop-blur-sm backdrop:bg-black/50 dark:backdrop:bg-white/10"
         >
-            <header className="bg-primary text-primary-foreground tracking-wider px-4 py-2 flex align-middle">
-                {title && <h1 className="text-lg font-semibold">{title}</h1>}
+            <header className="text-foreground tracking-wider px-4 py-2 flex items-center">
+                {title && <h1 className="font-semibold capitalize">{title}</h1>}
                 <div className="ms-auto">
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="rounded-full"
+                        className="rounded-full text-lg"
                         onClick={handleCloseModal}
                         aria-label="Close modal"
                     >
@@ -84,7 +84,7 @@ const Dialog = ({ isOpen, title, onClose, children }: ModalProps) => {
                     </Button>
                 </div>
             </header>
-            <div className="flex-1 px-6 py-2 flex items-center justify-center">
+            <div className="flex-1 px-6 pb-3 flex items-center justify-center">
                 {children}
             </div>
         </dialog>

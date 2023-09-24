@@ -15,8 +15,9 @@ interface TablePagination {
 export function useReactTablePagination<TData>(
     table: Table<TData>
 ): TablePagination {
-    const isPrevPage = !table.getCanPreviousPage();
-    const isNextPage = !table.getCanNextPage();
+    const isPrevPage = table.getCanPreviousPage();
+    const isNextPage = table.getCanNextPage();
+
     const getPrevPage = () => {
         return table.previousPage();
     };
@@ -32,7 +33,7 @@ export function useReactTablePagination<TData>(
 
     const currentPage = table.getState().pagination.pageIndex + 1;
     const setPage = (page: number) => {
-        table.setPageIndex(page);
+        table.setPageIndex(page - 1);
     };
 
     return {
