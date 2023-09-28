@@ -5,10 +5,8 @@ import { SubmitHandler } from "react-hook-form";
 import { useRowActions } from "@/hooks/useRowActions";
 import { useAppSelector } from "@/redux/hooks";
 import { selectActiveNotes } from "@/redux/notes/notesSlice";
-import type { Note } from "@/redux/notes/types";
 import NoteFormModal from "./NoteFormModal";
-import type { FormInputs } from "./NoteForm";
-import { CategoryEnum } from "../notes-table/data/categories";
+import type { Note, CreateNoteInput, UpdateNoteInput } from "@/api/schemas";
 
 export default function NoteFormModalPage() {
     const navigate = useNavigate();
@@ -34,24 +32,24 @@ export default function NoteFormModalPage() {
         navigate("/");
     };
 
-    const handleNoteFormSubmit: SubmitHandler<FormInputs> = (
-        data: FormInputs
-    ) => {
+    const handleNoteFormSubmit: SubmitHandler<
+        CreateNoteInput | UpdateNoteInput
+    > = (data: CreateNoteInput | UpdateNoteInput) => {
         if (id) {
-            onEdit(id, data);
+            onEdit({ noteId: id, values: data as UpdateNoteInput });
         } else {
-            onAdd(data);
+            onAdd(data as CreateNoteInput);
         }
         handleCloseNoteFormModal();
     };
 
-    const defaultNoteFormData: FormInputs = selectedNote
+    const defaultNoteFormData: CreateNoteInput = selectedNote
         ? {
               name: selectedNote.name,
-              category: selectedNote.category as CategoryEnum,
+              category: selectedNote.category,
               content: selectedNote.content,
           }
-        : { name: "", category: CategoryEnum.TASK, content: "" };
+        : { name: "", content: "", category: { name: "task" } };
 
     return (
         <NoteFormModal

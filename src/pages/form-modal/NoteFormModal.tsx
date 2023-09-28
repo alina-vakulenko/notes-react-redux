@@ -1,12 +1,12 @@
 import Dialog from "@/components/modal/Modal";
 import NoteForm from "./NoteForm";
-import type { FormInputs } from "./NoteForm";
+import { NoteCreateInput } from "@/redux/notes/types";
 
 interface NoteFormModalProps {
     isOpen: boolean;
     title?: string;
-    defaultNoteFormData: FormInputs;
-    onSubmit: (data: FormInputs) => void;
+    defaultNoteFormData: NoteCreateInput;
+    onSubmit: (data: NoteCreateInput) => void;
     onClose: () => void;
 }
 const NoteFormModal = ({

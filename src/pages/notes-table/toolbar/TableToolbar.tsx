@@ -1,6 +1,4 @@
 import { Table } from "@tanstack/react-table";
-import { categories } from "../data/categories";
-import type { Note } from "@/redux/notes/types";
 import ColumnFilter from "@/components/table/table-column-filter/TableColumnFilter";
 import SearchByColumn from "@/components/table/table-column-search/TableColumnSearch";
 import ResetTableFilters from "@/components/table/table-reset-filters-btn/TableResetFiltersBtn";
@@ -8,12 +6,19 @@ import ColumnsToggleMenu from "@/components/table/table-columns-toggle-menu/Tabl
 import RowsToggleMenu from "@/components/table/table-rows-toggle-menu/TableRowsToggleMenu";
 import { useReactTableHelpers } from "@/hooks/useReactTableHelpers";
 import { useReactTableColumnActions } from "@/hooks/useReactTableColumnActions";
+import type { Note } from "@/api/schemas";
+import { useAppSelector } from "@/redux/hooks";
+import { selectCategories } from "@/redux/categories/categoriesSlice";
 
 interface NotesTableToolbarProps {
     table: Table<Note>;
 }
 
 export default function NotesTableToolbar({ table }: NotesTableToolbarProps) {
+    const categories = useAppSelector(selectCategories);
+    const options = categories.map((item) => {
+        return { value: item.slug, label: item.name };
+    });
     const {
         isTableFiltered,
         hideableColumns,
@@ -45,7 +50,7 @@ export default function NotesTableToolbar({ table }: NotesTableToolbarProps) {
                 <ColumnsToggleMenu<Note> columns={hideableColumns} />
                 <ColumnFilter
                     title="category"
-                    options={categories}
+                    options={options}
                     columnValuesMap={columnValuesMap}
                     columnFilteredValues={columnFilteredValues}
                     clearColumnFilter={clearColumnFilter}

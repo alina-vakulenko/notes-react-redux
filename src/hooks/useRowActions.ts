@@ -1,43 +1,42 @@
-import {
-    noteAdded,
-    noteEdited,
-    noteArchived,
-    noteUnarchived,
-    noteRemoved,
-} from "@/redux/notes/notesSlice";
 import { useAppDispatch } from "@/redux/hooks";
+import {
+    fetchNotes,
+    addNote,
+    updateNote,
+    deleteNote,
+    toggleNoteStatus,
+} from "@/redux/notes/notesSlice";
+import { CreateNoteInput, UpdateNoteInput, NoteId } from "./../api/schemas";
 
 export const useRowActions = () => {
     const dispatch = useAppDispatch();
 
-    const onAdd = (data: {
-        name: string;
-        category: string;
-        content: string;
-    }) => {
-        dispatch(noteAdded(data.name, data.category, data.content));
+    const onLoad = () => {
+        dispatch(fetchNotes());
     };
 
-    const onEdit = (
-        noteId: string,
-        data: { name: string; category: string; content: string }
-    ) => {
-        dispatch(noteEdited(noteId, data.name, data.category, data.content));
+    const onAdd = (data: CreateNoteInput) => {
+        dispatch(addNote(data));
     };
 
-    const onArchived = (noteId: string) => {
-        dispatch(noteArchived(noteId));
+    const onEdit = (data: UpdateNoteInput) => {
+        dispatch(updateNote({ noteId: data.noteId, values: data.values }));
     };
 
-    const onUnarchived = (noteId: string) => {
-        dispatch(noteUnarchived(noteId));
+    const onArchived = (noteId: NoteId) => {
+        dispatch(toggleNoteStatus(noteId));
     };
 
-    const onRemove = (noteId: string) => {
-        dispatch(noteRemoved(noteId));
+    const onUnarchived = (noteId: NoteId) => {
+        dispatch(toggleNoteStatus(noteId));
+    };
+
+    const onRemove = (noteId: NoteId) => {
+        dispatch(deleteNote(noteId));
     };
 
     return {
+        onLoad,
         onAdd,
         onEdit,
         onArchived,

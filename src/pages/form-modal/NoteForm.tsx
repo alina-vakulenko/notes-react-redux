@@ -14,36 +14,38 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { CategoryEnum, categories } from "../notes-table/data/categories";
-import { NoteCreateInput, noteSchema } from "../notes-table/data/noteData";
+import { NoteSchema, CreateNoteInput } from "@/api/schemas";
+import { useAppSelector } from "@/redux/hooks";
+import { selectCategories } from "@/redux/categories/categoriesSlice";
 
 interface NoteFormProps {
-    defaultData: NoteCreateInput;
-    onSubmit: (data: NoteCreateInput) => void;
+    defaultData: CreateNoteInput;
+    onSubmit: (data: CreateNoteInput) => void;
 }
 
 interface CategoriesProps {
-    selectedValue: CategoryEnum;
-    onChange: (value: CategoryEnum) => void;
+    selectedName: string;
+    onChange: (name: string) => void;
 }
 
-const Categories = ({ selectedValue, onChange }: CategoriesProps) => {
+const Categories = ({ selectedName, onChange }: CategoriesProps) => {
+    const categories = useAppSelector(selectCategories);
     return (
         <RadioGroup
             onValueChange={onChange}
             className="flex flex-col space-y-0"
-            value={selectedValue}
+            value={selectedName}
         >
             {categories.map((category) => (
                 <FormItem
-                    key={category.value}
+                    key={category.slug}
                     className="flex items-center space-x-3 space-y-0"
                 >
                     <FormControl>
-                        <RadioGroupItem value={category.value} />
+                        <RadioGroupItem value={category.slug} />
                     </FormControl>
                     <FormLabel className="capitalize">
-                        {category.label}
+                        {category.name}
                     </FormLabel>
                 </FormItem>
             ))}
@@ -52,8 +54,8 @@ const Categories = ({ selectedValue, onChange }: CategoriesProps) => {
 };
 
 export default function NoteForm({ defaultData, onSubmit }: NoteFormProps) {
-    const form = useForm<NoteCreateInput>({
-        resolver: zodResolver(noteSchema),
+    const form = useForm<CreateNoteInput>({
+        resolver: zodResolver(NoteSchema),
         values: { ...defaultData },
     });
     return (
@@ -84,7 +86,7 @@ export default function NoteForm({ defaultData, onSubmit }: NoteFormProps) {
                             <FormLabel>Category</FormLabel>
                             <FormControl>
                                 <Categories
-                                    selectedValue={field.value as CategoryEnum}
+                                    selectedValue={field.value}
                                     onChange={field.onChange}
                                 />
                             </FormControl>

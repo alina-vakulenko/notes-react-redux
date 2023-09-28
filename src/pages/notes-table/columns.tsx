@@ -3,9 +3,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import TableColumnHeader from "@/components/table/table-column-header/TableColumnHeader";
 import { getFormattedDate } from "@/utils/getFormattedDate";
 import TableRowActions from "./row-actions";
-import type { Note } from "@/redux/notes/types";
-import { categories } from "./data/categories";
 import DataCell from "./DataCell";
+import type { Note } from "@/api/schemas";
 
 export const columns: ColumnDef<Note>[] = [
     {
@@ -45,10 +44,10 @@ export const columns: ColumnDef<Note>[] = [
         header: ({ column }) => {
             return <TableColumnHeader title="Created" column={column} />;
         },
-        accessorKey: "created",
+        accessorKey: "createdAt",
         cell: ({ row }) => {
             const { archived } = row.original;
-            const value = getFormattedDate(String(row.getValue("created")), {
+            const value = getFormattedDate(String(row.getValue("createdAt")), {
                 month: "numeric",
                 day: "numeric",
                 year: "numeric",
@@ -60,15 +59,11 @@ export const columns: ColumnDef<Note>[] = [
         header: ({ column }) => {
             return <TableColumnHeader title="Category" column={column} />;
         },
-        cell: ({ row, cell }) => {
-            const { archived } = row.original;
-            const label =
-                categories.find(
-                    (category) => category.value === cell.getValue()
-                )?.label ?? "";
+        cell: ({ row }) => {
+            const { archived, category } = row.original;
             return (
                 <DataCell
-                    value={label}
+                    value={category.name}
                     isArchived={archived}
                     className="capitalize"
                 />
@@ -103,7 +98,7 @@ export const columns: ColumnDef<Note>[] = [
         accessorKey: "dates",
         cell: ({ row }) => {
             const { archived } = row.original;
-            const items = String(row.getValue("dates")).split(", ");
+            const items: string[] = row.getValue("dates");
             let result = "";
             for (const item of items) {
                 try {

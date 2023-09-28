@@ -8,15 +8,25 @@ import DataTable from "@/components/table/data-table/DataTable";
 import RowsCounter from "@/components/table/table-rows-counter.tsx/TableRowsCounter";
 import TablePagination from "@/components/table/table-pagination/TablePagination";
 import { selectActiveNotes, selectNotes } from "@/redux/notes/notesSlice";
-import type { Note } from "@/redux/notes/types";
 import TableToolbar from "./toolbar/TableToolbar";
 import { columns } from "./columns";
+import { useRowActions } from "@/hooks/useRowActions";
+import type { Note } from "@/api/schemas";
 
 export default function NotesTable() {
     const { rowsFilter } = useRowFilters();
     const [data, setData] = useState<Note[]>([]);
+    const notesStatus = useAppSelector((state) => state.notes.status);
+    const notesError = useAppSelector((state) => state.notes.error);
     const activeNotes = useAppSelector(selectActiveNotes);
     const allNotes = useAppSelector(selectNotes);
+    const { onLoad } = useRowActions();
+
+    useEffect(() => {
+        if (notesStatus === "idle") {
+            onLoad();
+        }
+    }, []);
 
     useEffect(() => {
         let filteredNotes = rowsFilter[SEARCH_PARAMS_KEY.WITH_ARCHIVED]
@@ -43,6 +53,8 @@ export default function NotesTable() {
 
     return (
         <div className="w-full space-y-4">
+            {notesStatus === "loading" && <p>LOADING</p>}
+            {notesStatus === "failed" && <p>{notesError}</p>}
             <TableToolbar table={table} />
             <div className="p-2 rounded-md border border-border space-y-4 bg-background">
                 <DataTable<Note> table={table} />
