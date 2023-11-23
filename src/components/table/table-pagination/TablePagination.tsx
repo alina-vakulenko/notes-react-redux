@@ -1,31 +1,28 @@
+import { Note } from "@/api/schemas";
 import {
     PaginationNavigation,
     PaginationSelectPageSize,
 } from "@/components/pagination";
+import { useReactTablePagination } from "@/hooks/useReactTablePagination";
+import { Table } from "@tanstack/react-table";
 
 export interface TablePaginationProps {
-    isPrevPage: boolean;
-    isNextPage: boolean;
-    currentPage: number;
-    pageCount: number;
-    pageSize: number;
-    setPage: (page: number) => void;
-    setPageSize: (value: number) => void;
-    getPrevPage: () => void;
-    getNextPage: () => void;
+    table: Table<Note>;
 }
 
-export default function TablePagination({
-    currentPage,
-    pageCount,
-    pageSize,
-    isPrevPage,
-    isNextPage,
-    getPrevPage,
-    getNextPage,
-    setPage,
-    setPageSize,
-}: TablePaginationProps) {
+export default function TablePagination({ table }: TablePaginationProps) {
+    const {
+        currentPage,
+        pageCount,
+        pageSize,
+        isPrevPage,
+        isNextPage,
+        getPrevPage,
+        getNextPage,
+        setPage,
+        setPageSize,
+    } = useReactTablePagination(table);
+
     return (
         <div className="flex flex-col md:flex-row items-center justify-center gap-4">
             <PaginationSelectPageSize

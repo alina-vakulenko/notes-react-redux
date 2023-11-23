@@ -7,7 +7,7 @@ import {
 
 const CATEGORIES_ENDPOINT = "/categories";
 
-export const CategoryService = {
+export const categoriesApi = {
     getAll: async function () {
         const response = await api.get(CATEGORIES_ENDPOINT);
         return response.data;

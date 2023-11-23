@@ -15,8 +15,8 @@ interface NotesTableToolbarProps {
 }
 
 export default function NotesTableToolbar({ table }: NotesTableToolbarProps) {
-    const categories = useAppSelector(selectCategories);
-    const options = categories.map((item) => {
+    const { data, status, error, count } = useAppSelector(selectCategories);
+    const options = data.map((item) => {
         return { value: item.slug, label: item.name };
     });
     const {

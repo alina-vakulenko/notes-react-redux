@@ -8,19 +8,23 @@ import type { NoteStats } from "@/api/schemas";
 
 export default function SummaryNotesTable() {
     const notesStats = useAppSelector((state) => selectNotesStats(state));
-    const categories = useAppSelector(selectCategories);
+    const {
+        data: categories,
+        status,
+        error,
+    } = useAppSelector(selectCategories);
 
-    const data: NoteStats[] = [];
+    const summary: NoteStats[] = [];
 
     categories.forEach((category) =>
-        data.push({
+        summary.push({
             category: category,
             active: notesStats[category.name].active,
             archived: notesStats[category.name].archived,
         })
     );
 
-    const { table } = useTable(data, columns);
+    const { table } = useTable(summary, columns);
 
     return <DataTable table={table} />;
 }

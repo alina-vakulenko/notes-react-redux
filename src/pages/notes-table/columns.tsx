@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import TableColumnHeader from "@/components/table/table-column-header/TableColumnHeader";
-import { getFormattedDate } from "@/utils/getFormattedDate";
+import { formatDate } from "@/utils/formatDate";
 import TableRowActions from "./row-actions";
 import DataCell from "./DataCell";
 import type { Note } from "@/api/schemas";
@@ -47,11 +47,7 @@ export const columns: ColumnDef<Note>[] = [
         accessorKey: "createdAt",
         cell: ({ row }) => {
             const { archived } = row.original;
-            const value = getFormattedDate(String(row.getValue("createdAt")), {
-                month: "numeric",
-                day: "numeric",
-                year: "numeric",
-            });
+            const value = formatDate(String(row.getValue("createdAt")));
             return <DataCell value={value} isArchived={archived} />;
         },
     },
@@ -102,11 +98,7 @@ export const columns: ColumnDef<Note>[] = [
             let result = "";
             for (const item of items) {
                 try {
-                    const transformtedDate = getFormattedDate(item, {
-                        month: "numeric",
-                        day: "numeric",
-                        year: "numeric",
-                    });
+                    const transformtedDate = formatDate(item);
                     result = result.concat(transformtedDate, " ");
                 } catch (e) {
                     result = result.concat(item, " ");

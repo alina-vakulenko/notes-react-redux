@@ -1,28 +1,33 @@
 import { useEffect, useState } from "react";
-import { useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { SEARCH_PARAMS_KEY, useRowFilters } from "@/hooks/useRowFilters";
 import { useTable } from "@/hooks/useTable";
-import { useReactTablePagination } from "@/hooks/useReactTablePagination";
 import { useReactTableHelpers } from "@/hooks/useReactTableHelpers";
 import DataTable from "@/components/table/data-table/DataTable";
 import RowsCounter from "@/components/table/table-rows-counter.tsx/TableRowsCounter";
 import TablePagination from "@/components/table/table-pagination/TablePagination";
-import { selectActiveNotes, selectNotes } from "@/redux/notes/notesSlice";
+import {
+    fetchNotes,
+    selectActiveNotes,
+    selectNotes,
+} from "@/redux/notes/notesSlice";
 import TableToolbar from "./toolbar/TableToolbar";
 import { columns } from "./columns";
-import { useRowActions } from "@/hooks/useRowActions";
 import type { Note } from "@/api/schemas";
 
 export default function NotesTable() {
+    const dispatch = useAppDispatch();
     const { rowsFilter } = useRowFilters();
     const [data, setData] = useState<Note[]>([]);
     const notesStatus = useAppSelector((state) => state.notes.status);
     const notesError = useAppSelector((state) => state.notes.error);
     const activeNotes = useAppSelector(selectActiveNotes);
     const allNotes = useAppSelector(selectNotes);
-    const { onLoad } = useRowActions();
 
     useEffect(() => {
+        const onLoad = () => {
+            dispatch(fetchNotes());
+        };
         if (notesStatus === "idle") {
             onLoad();
         }
@@ -47,7 +52,6 @@ export default function NotesTable() {
 
     const { table } = useTable(data, columns);
 
-    const paginationProps = useReactTablePagination(table);
     const { tableRowsCount, tableSelectedRowsCount } =
         useReactTableHelpers(table);
 
@@ -60,10 +64,10 @@ export default function NotesTable() {
                 <DataTable<Note> table={table} />
                 <div className="space-y-4 lg:flex md:space-x-2 md:space-y-0 items-center justify-between">
                     <RowsCounter
-                        tableRowsCount={tableRowsCount}
-                        tableSelectedRowsCount={tableSelectedRowsCount}
+                        totalRowsCount={tableRowsCount}
+                        selectedRowsCount={tableSelectedRowsCount}
                     />
-                    <TablePagination {...paginationProps} />
+                    <TablePagination table={table} />
                 </div>
             </div>
         </div>

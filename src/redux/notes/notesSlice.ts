@@ -5,8 +5,7 @@ import {
     createAsyncThunk,
 } from "@reduxjs/toolkit";
 import { RootState } from "@/redux/store";
-import { NoteService } from "@/api/NoteService";
-import { isLoading, isError } from "../utils";
+import { notesApi } from "@/api/notesApi";
 import {
     RequestStatus,
     Note,
@@ -20,19 +19,20 @@ import {
     DeleteNoteResponse,
     DeleteNoteInput,
 } from "@/api/schemas";
+import { isLoading, isError } from "../utils";
 
 type NotesState = {
     status: RequestStatus;
     error: string | null;
-    notesList: Note[];
-    notesCount: number;
+    data: Note[];
+    count: number;
 };
 
 export const initialState: NotesState = {
     status: "idle",
     error: null,
-    notesList: [] as Note[],
-    notesCount: 0,
+    data: [],
+    count: 0,
 };
 
 export const fetchNotes = createAsyncThunk<
@@ -41,7 +41,7 @@ export const fetchNotes = createAsyncThunk<
     { rejectValue: string }
 >("notes/fetchNotes", async (_, { rejectWithValue }) => {
     try {
-        return await NoteService.getAll();
+        return await notesApi.getAll();
     } catch (err: unknown) {
         if (err instanceof Error) {
             return rejectWithValue("Failed to load notes. " + err.message);
@@ -56,7 +56,7 @@ export const addNote = createAsyncThunk<
     { rejectValue: string }
 >("notes/addNote", async (note, { rejectWithValue }) => {
     try {
-        return await NoteService.create(note);
+        return await notesApi.create(note);
     } catch (err) {
         if (err instanceof Error) {
             return rejectWithValue("Failed to add note. " + err.message);
@@ -71,7 +71,7 @@ export const updateNote = createAsyncThunk<
     { rejectValue: string }
 >("notes/updateNote", async (args, { rejectWithValue }) => {
     try {
-        return await NoteService.update(args);
+        return await notesApi.update(args);
     } catch (err) {
         if (err instanceof Error) {
             return rejectWithValue("Failed to update note. " + err.message);
@@ -85,12 +85,12 @@ export const toggleNoteStatus = createAsyncThunk<
     ToggleNoteStatusInput,
     { rejectValue: string; state: { notes: NotesState } }
 >("notes/toggleNoteStatus", async (noteId, { rejectWithValue, getState }) => {
-    const todo = getState().notes.notesList.find((note) => note.id === noteId);
+    const todo = getState().notes.data.find((note) => note.id === noteId);
     if (!todo) {
         return rejectWithValue("No such note found");
     }
     try {
-        return await NoteService.update({
+        return await notesApi.update({
             noteId,
             values: {
                 archived: !todo.archived,
@@ -112,7 +112,7 @@ export const deleteNote = createAsyncThunk<
     { rejectValue: string }
 >("notes/deleteNote", async (noteId, { rejectWithValue }) => {
     try {
-        return await NoteService.delete(noteId);
+        return await notesApi.delete(noteId);
     } catch (err) {
         if (err instanceof Error) {
             return rejectWithValue("Failed to delete note. " + err.message);
@@ -129,34 +129,34 @@ const notesSlice = createSlice({
         builder
             .addCase(fetchNotes.fulfilled, (state, action) => {
                 state.status = "succeeded";
-                state.notesList = action.payload.notes;
-                state.notesCount = action.payload.count;
+                state.data = action.payload.notes;
+                state.count = action.payload.count;
             })
             .addCase(addNote.fulfilled, (state, action) => {
                 state.status = "succeeded";
-                state.notesList.push(action.payload);
-                state.notesCount += 1;
+                state.data.push(action.payload);
+                state.count += 1;
             })
             .addCase(updateNote.fulfilled, (state, action) => {
                 state.status = "succeeded";
-                const existingNoteIndex: number = state.notesList.findIndex(
+                const existingNoteIndex: number = state.data.findIndex(
                     (note: Note) => note.id === action.payload.id
                 );
 
                 if (existingNoteIndex !== -1) {
-                    state.notesList[existingNoteIndex] = action.payload;
+                    state.data[existingNoteIndex] = action.payload;
                 }
             })
             .addCase(deleteNote.fulfilled, (state, action) => {
                 state.status = "succeeded";
-                state.notesList = state.notesList.filter(
+                state.data = state.data.filter(
                     (note: Note) => note.id !== action.payload.id
                 );
-                state.notesCount -= 1;
+                state.count -= 1;
             })
             .addCase(toggleNoteStatus.fulfilled, (state, action) => {
                 state.status = "succeeded";
-                const existingNote: Note | undefined = state.notesList.find(
+                const existingNote: Note | undefined = state.data.find(
                     (note: Note) => note.id === action.payload.id
                 );
                 if (existingNote) {
@@ -165,22 +165,22 @@ const notesSlice = createSlice({
             })
             .addMatcher(isLoading, (state) => {
                 state.status = "loading";
-                state.notesList = [];
-                state.notesCount = 0;
+                state.data = [];
+                state.count = 0;
                 state.error = null;
             })
             .addMatcher(isError, (state, action: PayloadAction<string>) => {
                 state.status = "failed";
                 state.error = action.payload;
-                state.notesList = [];
-                state.notesCount = 0;
+                state.data = [];
+                state.count = 0;
             });
     },
 });
 
-const selectNotes = (state: RootState) => state.notes.notesList;
+const selectNotes = (state: RootState) => state.notes.data;
 const selectNoteById = (state: RootState, noteId: string) =>
-    state.notes.notesList.find((note) => note.id === noteId);
+    state.notes.data.find((note) => note.id === noteId);
 
 const selectActiveNotes = createSelector([selectNotes], (notes) =>
     notes.filter((note) => !note.archived)
@@ -206,12 +206,6 @@ const selectNotesStats = createSelector([selectNotes], (notes) => {
     return result;
 });
 
-export {
-    notesSlice,
-    selectActiveNotes,
-    selectNotesStats,
-    selectNotes,
-    selectNoteById,
-};
+export { selectActiveNotes, selectNotesStats, selectNotes, selectNoteById };
 
 export default notesSlice.reducer;

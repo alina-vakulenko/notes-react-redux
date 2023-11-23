@@ -1,15 +1,15 @@
 export interface TableRowsCounterProps {
-    tableRowsCount: number;
-    tableSelectedRowsCount: number;
+    totalRowsCount: number;
+    selectedRowsCount: number;
 }
 
 export default function TableRowsCounter({
-    tableRowsCount,
-    tableSelectedRowsCount,
+    totalRowsCount,
+    selectedRowsCount,
 }: TableRowsCounterProps) {
     return (
         <div className="flex-1 text-sm text-muted-foreground">
-            {tableSelectedRowsCount} of {tableRowsCount} row(s) selected.
+            {selectedRowsCount} of {totalRowsCount} row(s) selected.
         </div>
     );
 }

@@ -1,6 +1,5 @@
 import { useAppDispatch } from "@/redux/hooks";
 import {
-    fetchNotes,
     addNote,
     updateNote,
     deleteNote,
@@ -10,10 +9,6 @@ import { CreateNoteInput, UpdateNoteInput, NoteId } from "./../api/schemas";
 
 export const useRowActions = () => {
     const dispatch = useAppDispatch();
-
-    const onLoad = () => {
-        dispatch(fetchNotes());
-    };
 
     const onAdd = (data: CreateNoteInput) => {
         dispatch(addNote(data));
@@ -36,7 +31,6 @@ export const useRowActions = () => {
     };
 
     return {
-        onLoad,
         onAdd,
         onEdit,
         onArchived,

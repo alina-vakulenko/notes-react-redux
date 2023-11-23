@@ -11,7 +11,7 @@ const NOTES_ENDPOINT = "/notes";
 //                 : undefined,
 //         }
 
-export const NoteService = {
+export const notesApi = {
     getOne: async function (id: NoteId) {
         const response = await api.get(NOTES_ENDPOINT, {
             params: id,

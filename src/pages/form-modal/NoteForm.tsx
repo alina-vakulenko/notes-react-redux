@@ -29,7 +29,14 @@ interface CategoriesProps {
 }
 
 const Categories = ({ selectedName, onChange }: CategoriesProps) => {
-    const categories = useAppSelector(selectCategories);
+    const {
+        data: categories,
+        status,
+        error,
+    } = useAppSelector(selectCategories);
+
+    if (error) return null;
+
     return (
         <RadioGroup
             onValueChange={onChange}
